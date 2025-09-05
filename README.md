@@ -32,9 +32,9 @@ The directory contains [instructions](INSTALL.md) to install a compiler and a si
 
 Gabriel Radanne, Inria, LIP [email](mailto:gabriel.radanne@ens-lyon.fr)
 
-## Exam 
+## Exam
 
-* MCC (final grade computation) : 
+* MCC (final grade computation) :
 ```
 let ccgrade = average(Lab3, Lab4, Lab5, homework)
 in (finalnote + ccgrade)/2
@@ -48,3 +48,4 @@ in (finalnote + ccgrade)/2
   * 2021-2023 : Nicolas Chappe, Remi Di Guardia
   * 2023-2024 : Samuel Humeau, Hugo Thievenaz
   * 2024-2025 : Samuel Humeau, Emma Nardino
+  * 2025-2026 : Emma Nardino, Léo Paviet Salomon

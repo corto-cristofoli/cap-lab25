@@ -3,14 +3,14 @@ _Academic first semester 2025-2026_
 
 # Week 1:
 
-- :book: Course: Monday 07/09/2025, 10h30-12h30. Amphi K (Gabriel Radanne)
-  
+- :book: Course: Monday 08/09/2025, 10h30-12h30. Amphi K (Gabriel Radanne)
+
   * Introduction: [transparents](course/cap_cours01_intro.pdf).
   * ISA [ref pdf RISCV](course/riscv_isa.pdf).
   * [Demo Assembly](course/demo20.s).
   * [Demo Parsing](course/ANTLRExamples.tar.xz).
 
-- :hammer: Lab 1: Tuesday 08/09/2025, 10h15-12h15. Room E001 (Emma Nardino & Leo Paviet Salomon)
+- :hammer: Lab 1: Tuesday 09/09/2025, 10h15-12h15. Room E001 (Emma Nardino & Leo Paviet Salomon)
 
   * TP RiscV: [TP01](TP01/tp1.pdf)
   * Supporting file in [TP01](TP01/riscv)
