@@ -1,5 +1,5 @@
 #simple RISCV assembly demo
-#riscv64-unknown-elf-gcc  demo20.s ../../TP/TP01/riscv/libprint.s -o demo20
+#riscv64-unknown-elf-gcc  demo20.s libprint.s -o demo20
 #spike pk demo20
 	.text
 	.globl main
