@@ -124,3 +124,8 @@ Must output:
 You need to have a recent version of nodejs and npm installed (`apt install npm` on Ubuntu 21.04, but the one provided with 20.04 is too old, otherwise install the tarball from https://nodejs.org/en/). Then, just type:
 
     sudo npm install -g pyright
+
+
+# Nix-specific (at your own risk)
+
+Some of your fellow students created a [nix.shell](nix.shell) for you to use, which should include everything you need for the labs. WE CANNOT GARANTEE IT WILL WORK
