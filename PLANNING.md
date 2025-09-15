@@ -15,5 +15,6 @@ _Academic first semester 2025-2026_
   * TP RiscV: [TP01](TP01/tp1.pdf)
   * Supporting file in [TP01](TP01/riscv)
 
-- :book: Course: Monday 15/09/2025, 10h15-12h315. Amphi B (Gabriel Radanne)
+- :book: Course: Monday 15/09/2025, 10h15-12h315. Amphi B (Ludovic Henrio)
+ 
   Semantics [transparents](course/CAP_Semantics.pdf).
