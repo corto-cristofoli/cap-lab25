@@ -1,0 +1,9 @@
+OP=1
+DIGIT=2
+LETTER=3
+ID=4
+LPAR=5
+RPAR=6
+WS=7
+'('=5
+')'=6

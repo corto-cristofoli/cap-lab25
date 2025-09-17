@@ -15,6 +15,7 @@ def main():
 
     # Display the token stream
     stream.fill()  # needed to get stream.tokens (otherwise lazily filled-in)
+    print()
     for t in stream.tokens:
         print(f'"{t.text}" matched as {Example1.symbolicNames[t.type]}')
     print("Finished")
