@@ -19,6 +19,6 @@ _Academic first semester 2025-2026_
  
   Semantics [transparents](course/CAP_Semantics.pdf).
 
-  - :book: Course: Monday22/09/2025, 10h15-12h315. Amphi B (Ludovic Henrio)
+- :book: Course: Monday22/09/2025, 10h15-12h315. Amphi B (Ludovic Henrio)
  
   Typing [transparents](course/CAP_Typing.pdf).
