@@ -128,4 +128,4 @@ You need to have a recent version of nodejs and npm installed (`apt install npm`
 
 # Nix-specific (at your own risk)
 
-Some of your fellow students created a [nix.shell](nix.shell) for you to use, which should include everything you need for the labs. WE CANNOT GARANTEE IT WILL WORK
+Some of your fellow students created a [shell.nix](shell.nix) for you to use, which should include everything you need for the labs. WE CANNOT GARANTEE IT WILL WORK
