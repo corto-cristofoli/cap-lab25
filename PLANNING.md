@@ -1,8 +1,6 @@
 # Planning of the compilation course (CAP, Compilation and Program Analysis)
 _Academic first semester 2025-2026_
 
-# Week 1:
-
 - :book: Course: Monday 08/09/2025, 10h30-12h30. Amphi K (Gabriel Radanne)
 
   * Introduction: [transparents](course/cap_cours01_intro.pdf).
@@ -19,6 +17,10 @@ _Academic first semester 2025-2026_
  
   Semantics [transparents](course/CAP_Semantics.pdf).
 
-- :book: Course: Monday22/09/2025, 10h15-12h315. Amphi B (Ludovic Henrio)
+- :book: Course: Monday 22/09/2025, 10h15-12h315. Amphi B (Ludovic Henrio)
  
   Typing [transparents](course/CAP_Typing.pdf).
+    
+- :book: Course: Monday 29/09/2025, 10h15-12h315. Amphi B (Gabriel Radanne)
+
+  3-Address Code generation [transparents](course/cap_cours04_3ad_codegen.pdf).
