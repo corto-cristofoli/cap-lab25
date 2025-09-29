@@ -1,0 +1,7 @@
+RegAlloc.EnterSSA module
+========================
+
+.. automodule:: RegAlloc.EnterSSA
+   :members:
+   :show-inheritance:
+   :undoc-members:

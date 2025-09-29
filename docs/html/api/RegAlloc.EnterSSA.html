@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RegAlloc.EnterSSA module &mdash; MiniC  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../_static/doctools.js?v=9bcbadda"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            MiniC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Lib.Errors.html">Base library - Errors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Lib.Statement.html">Base library - Statement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Lib.RiscV.html">Base library - RISC-V instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Lib.Operands.html">Base library - Operands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Lib.FunctionData.html">Base library - Function data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Lib.LinearCode.html">Linear intermediate representation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Lib.Allocator.html">Temporary allocation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">MiniC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">RegAlloc.EnterSSA module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/RegAlloc.EnterSSA.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-RegAlloc.EnterSSA">
+<span id="regalloc-enterssa-module"></span><h1>RegAlloc.EnterSSA module<a class="headerlink" href="#module-RegAlloc.EnterSSA" title="Link to this heading"></a></h1>
+<p>CAP, SSA Intro, Elimination and Optimisations
+Functions to convert a CFG into SSA Form.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="RegAlloc.EnterSSA.insertPhis">
+<span class="sig-prename descclassname"><span class="pre">RegAlloc.EnterSSA.</span></span><span class="sig-name descname"><span class="pre">insertPhis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CFG</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DF</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Block</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">Block</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/RegAlloc/EnterSSA.html#insertPhis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#RegAlloc.EnterSSA.insertPhis" title="Link to this definition"></a></dt>
+<dd><p><cite>insertPhis(CFG, DF)</cite> inserts phi nodes in <cite>cfg</cite> where needed.
+At this point, phi nodes will look like <cite>temp_x = φ(temp_x, …, temp_x)</cite>.</p>
+<p>This is an helper function called during SSA entry.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="RegAlloc.EnterSSA.rename_block">
+<span class="sig-prename descclassname"><span class="pre">RegAlloc.EnterSSA.</span></span><span class="sig-name descname"><span class="pre">rename_block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CFG</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DT</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Block</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">Block</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">renamer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Renamer" title="Lib.Operands.Renamer"><span class="pre">Renamer</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Block</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/RegAlloc/EnterSSA.html#rename_block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#RegAlloc.EnterSSA.rename_block" title="Link to this definition"></a></dt>
+<dd><p>Rename variables from block b.</p>
+<p>This is an auxiliary function for <cite>rename_variables</cite>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="RegAlloc.EnterSSA.rename_variables">
+<span class="sig-prename descclassname"><span class="pre">RegAlloc.EnterSSA.</span></span><span class="sig-name descname"><span class="pre">rename_variables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CFG</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DT</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Block</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">Block</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/RegAlloc/EnterSSA.html#rename_variables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#RegAlloc.EnterSSA.rename_variables" title="Link to this definition"></a></dt>
+<dd><p>Rename variables in the CFG, to transform <cite>temp_x = φ(temp_x, …, temp_x)</cite>
+into <cite>temp_x = φ(temp_0, … temp_n)</cite>.</p>
+<p>This is an helper function called during SSA entry.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="RegAlloc.EnterSSA.enter_ssa">
+<span class="sig-prename descclassname"><span class="pre">RegAlloc.EnterSSA.</span></span><span class="sig-name descname"><span class="pre">enter_ssa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CFG</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dom_graphs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'prog'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/RegAlloc/EnterSSA.html#enter_ssa"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#RegAlloc.EnterSSA.enter_ssa" title="Link to this definition"></a></dt>
+<dd><p>Convert the CFG <cite>cfg</cite> into SSA Form:
+compute the dominance frontier, then insert phi nodes and finally
+rename variables accordingly.</p>
+<p><cite>dom_graphs</cite> indicates if we have to print the domination graphs.
+<cite>basename</cite> is used for the names of the produced graphs.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, compil-lyon.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

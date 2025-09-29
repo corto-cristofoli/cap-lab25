@@ -1,0 +1,7 @@
+CodeGen.AllInMemAllocator module
+================================
+
+.. automodule:: CodeGen.AllInMemAllocator
+   :members:
+   :show-inheritance:
+   :undoc-members:

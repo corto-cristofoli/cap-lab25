@@ -1,0 +1,7 @@
+CodeGen.MiniCCodeGen3AVisitor module
+====================================
+
+.. automodule:: CodeGen.MiniCCodeGen3AVisitor
+   :members:
+   :show-inheritance:
+   :undoc-members:

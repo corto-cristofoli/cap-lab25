@@ -1,0 +1,7 @@
+Lib.Errors module
+=================
+
+.. automodule:: Lib.Errors
+   :members:
+   :show-inheritance:
+   :undoc-members:

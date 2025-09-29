@@ -35,8 +35,8 @@ doc: antlr
 	sphinx-apidoc -e -f -o doc/api . TP* replace_* *Wrapper* MiniC* conf* test*
 	make -C doc html
 
-test: test-interpret
 
+test: test-interpret test-codegen
 
 
 test-pyright: antlr
@@ -67,13 +67,18 @@ test-naive: test-pyright antlr
 test-mem: test-pyright antlr
 	$(LINEAR) python3 -m pytest $(PYTEST_BASE_OPTS) $(PYTEST_OPTS) ./test_codegen.py -k 'test_alloc_mem'
 
-test-hybrid: test-pyright antlr
-	ALLOC_FILE=CodeGen/HybridNaiveAllocator.py ./test_replace_mem.py -vv --failed-first $(PYTEST_OPTS)
-	$(LINEAR) python3 -m pytest $(PYTEST_BASE_OPTS) $(PYTEST_OPTS) ./test_codegen.py -k 'test_alloc_hybrid'
 
 # Test for all but the smart allocator, i.e. everything that lab4 should pass:
 test-lab4: test-pyright antlr
 	$(LINEAR) python3 -m pytest $(PYTEST_BASE_OPTS) $(PYTEST_OPTS) ./test_codegen.py -k 'not test_smart'
+
+# Test just the smart allocator (quicker than test)
+test-smart: test-pyright antlr
+	python3 -m pytest $(PYTEST_BASE_OPTS) $(PYTEST_OPTS) ./test_codegen.py -k 'test_smart'
+
+# Complete testsuite (should pass for lab5):
+test-codegen: test-pyright antlr
+	python3 -m pytest $(PYTEST_BASE_OPTS) $(PYTEST_OPTS) ./test_codegen.py
 
 NAME_CLEAN = ${shell printf '%s' "$(MYNAME)" | tr -cd '[0-9a-zA-Z]'}
 BASEDIR=$$(basename "$$PWD")

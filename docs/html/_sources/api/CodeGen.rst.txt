@@ -1,0 +1,22 @@
+CodeGen package
+===============
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   CodeGen.AllInMemAllocator
+   CodeGen.BuildCFG
+   CodeGen.HybridNaiveAllocator
+   CodeGen.LinearizeCFG
+   CodeGen.MiniCCodeGen3AVisitor
+
+Module contents
+---------------
+
+.. automodule:: CodeGen
+   :members:
+   :show-inheritance:
+   :undoc-members:

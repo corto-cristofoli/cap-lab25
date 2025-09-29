@@ -1,0 +1,7 @@
+Lib.Statement module
+====================
+
+.. automodule:: Lib.Statement
+   :members:
+   :show-inheritance:
+   :undoc-members:

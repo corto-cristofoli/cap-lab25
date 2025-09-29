@@ -1,0 +1,23 @@
+RegAlloc package
+================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   RegAlloc.EnterSSA
+   RegAlloc.ExitSSA
+   RegAlloc.LivenessDataFlow
+   RegAlloc.LivenessSSA
+   RegAlloc.SequentializeMoves
+   RegAlloc.SmartAllocator
+
+Module contents
+---------------
+
+.. automodule:: RegAlloc
+   :members:
+   :show-inheritance:
+   :undoc-members:

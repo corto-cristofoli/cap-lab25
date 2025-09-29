@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome to MiniC’s documentation! &mdash; MiniC  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=9bcbadda"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Lib.Errors module" href="api/Lib.Errors.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            MiniC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api/Lib.Errors.html">Base library - Errors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/Lib.Statement.html">Base library - Statement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/Lib.RiscV.html">Base library - RISC-V instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/Lib.Operands.html">Base library - Operands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/Lib.FunctionData.html">Base library - Function data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/Lib.LinearCode.html">Linear intermediate representation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/Lib.Allocator.html">Temporary allocation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">MiniC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Welcome to MiniC’s documentation!</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="welcome-to-minic-s-documentation">
+<h1>Welcome to MiniC’s documentation!<a class="headerlink" href="#welcome-to-minic-s-documentation" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api/Lib.Errors.html">Base library - Errors</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Errors.html#Lib.Errors.MiniCRuntimeError"><code class="docutils literal notranslate"><span class="pre">MiniCRuntimeError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Errors.html#Lib.Errors.MiniCInternalError"><code class="docutils literal notranslate"><span class="pre">MiniCInternalError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Errors.html#Lib.Errors.MiniCUnsupportedError"><code class="docutils literal notranslate"><span class="pre">MiniCUnsupportedError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Errors.html#Lib.Errors.MiniCTypeError"><code class="docutils literal notranslate"><span class="pre">MiniCTypeError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Errors.html#Lib.Errors.AllocationError"><code class="docutils literal notranslate"><span class="pre">AllocationError</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/Lib.Statement.html">Base library - Statement</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.regset_to_string"><code class="docutils literal notranslate"><span class="pre">regset_to_string()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.Statement"><code class="docutils literal notranslate"><span class="pre">Statement</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.Statement.defined"><code class="docutils literal notranslate"><span class="pre">Statement.defined()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.Statement.used"><code class="docutils literal notranslate"><span class="pre">Statement.used()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.Statement.substitute"><code class="docutils literal notranslate"><span class="pre">Statement.substitute()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.Statement.with_args"><code class="docutils literal notranslate"><span class="pre">Statement.with_args()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.Statement.printIns"><code class="docutils literal notranslate"><span class="pre">Statement.printIns()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.Comment"><code class="docutils literal notranslate"><span class="pre">Comment</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.Comment.comment"><code class="docutils literal notranslate"><span class="pre">Comment.comment</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.Comment.printIns"><code class="docutils literal notranslate"><span class="pre">Comment.printIns()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.Label"><code class="docutils literal notranslate"><span class="pre">Label</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.Label.name"><code class="docutils literal notranslate"><span class="pre">Label.name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.Label.printIns"><code class="docutils literal notranslate"><span class="pre">Label.printIns()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.Instruction"><code class="docutils literal notranslate"><span class="pre">Instruction</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.Instruction.ins"><code class="docutils literal notranslate"><span class="pre">Instruction.ins</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.Instruction.is_read_only"><code class="docutils literal notranslate"><span class="pre">Instruction.is_read_only()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.Instruction.rename"><code class="docutils literal notranslate"><span class="pre">Instruction.rename()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.Instruction.args"><code class="docutils literal notranslate"><span class="pre">Instruction.args()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.Instruction.defined"><code class="docutils literal notranslate"><span class="pre">Instruction.defined()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.Instruction.used"><code class="docutils literal notranslate"><span class="pre">Instruction.used()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.Instruction.printIns"><code class="docutils literal notranslate"><span class="pre">Instruction.printIns()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.Instru3A"><code class="docutils literal notranslate"><span class="pre">Instru3A</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.Instru3A.args"><code class="docutils literal notranslate"><span class="pre">Instru3A.args()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.Instru3A.rename"><code class="docutils literal notranslate"><span class="pre">Instru3A.rename()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.Instru3A.substitute"><code class="docutils literal notranslate"><span class="pre">Instru3A.substitute()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.Instru3A.with_args"><code class="docutils literal notranslate"><span class="pre">Instru3A.with_args()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.AbsoluteJump"><code class="docutils literal notranslate"><span class="pre">AbsoluteJump</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.AbsoluteJump.ins"><code class="docutils literal notranslate"><span class="pre">AbsoluteJump.ins</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.AbsoluteJump.label"><code class="docutils literal notranslate"><span class="pre">AbsoluteJump.label</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.AbsoluteJump.args"><code class="docutils literal notranslate"><span class="pre">AbsoluteJump.args()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.AbsoluteJump.rename"><code class="docutils literal notranslate"><span class="pre">AbsoluteJump.rename()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.AbsoluteJump.substitute"><code class="docutils literal notranslate"><span class="pre">AbsoluteJump.substitute()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.AbsoluteJump.with_args"><code class="docutils literal notranslate"><span class="pre">AbsoluteJump.with_args()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.AbsoluteJump.targets"><code class="docutils literal notranslate"><span class="pre">AbsoluteJump.targets()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.ConditionalJump"><code class="docutils literal notranslate"><span class="pre">ConditionalJump</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.ConditionalJump.cond"><code class="docutils literal notranslate"><span class="pre">ConditionalJump.cond</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.ConditionalJump.label"><code class="docutils literal notranslate"><span class="pre">ConditionalJump.label</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.ConditionalJump.op1"><code class="docutils literal notranslate"><span class="pre">ConditionalJump.op1</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.ConditionalJump.op2"><code class="docutils literal notranslate"><span class="pre">ConditionalJump.op2</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.ConditionalJump.args"><code class="docutils literal notranslate"><span class="pre">ConditionalJump.args()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.ConditionalJump.rename"><code class="docutils literal notranslate"><span class="pre">ConditionalJump.rename()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.ConditionalJump.substitute"><code class="docutils literal notranslate"><span class="pre">ConditionalJump.substitute()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Statement.html#Lib.Statement.ConditionalJump.with_args"><code class="docutils literal notranslate"><span class="pre">ConditionalJump.with_args()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/Lib.RiscV.html">Base library - RISC-V instructions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.RiscV.html#Lib.RiscV.call"><code class="docutils literal notranslate"><span class="pre">call()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.RiscV.html#Lib.RiscV.jump"><code class="docutils literal notranslate"><span class="pre">jump()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.RiscV.html#Lib.RiscV.conditional_jump"><code class="docutils literal notranslate"><span class="pre">conditional_jump()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.RiscV.html#Lib.RiscV.add"><code class="docutils literal notranslate"><span class="pre">add()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.RiscV.html#Lib.RiscV.mul"><code class="docutils literal notranslate"><span class="pre">mul()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.RiscV.html#Lib.RiscV.div"><code class="docutils literal notranslate"><span class="pre">div()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.RiscV.html#Lib.RiscV.rem"><code class="docutils literal notranslate"><span class="pre">rem()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.RiscV.html#Lib.RiscV.sub"><code class="docutils literal notranslate"><span class="pre">sub()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.RiscV.html#Lib.RiscV.land"><code class="docutils literal notranslate"><span class="pre">land()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.RiscV.html#Lib.RiscV.lor"><code class="docutils literal notranslate"><span class="pre">lor()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.RiscV.html#Lib.RiscV.xor"><code class="docutils literal notranslate"><span class="pre">xor()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.RiscV.html#Lib.RiscV.li"><code class="docutils literal notranslate"><span class="pre">li()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.RiscV.html#Lib.RiscV.mv"><code class="docutils literal notranslate"><span class="pre">mv()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.RiscV.html#Lib.RiscV.ld"><code class="docutils literal notranslate"><span class="pre">ld()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.RiscV.html#Lib.RiscV.sd"><code class="docutils literal notranslate"><span class="pre">sd()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/Lib.Operands.html">Base library - Operands</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Operands.html#Lib.Operands.Operand"><code class="docutils literal notranslate"><span class="pre">Operand</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Operands.html#Lib.Operands.Condition"><code class="docutils literal notranslate"><span class="pre">Condition</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Operands.html#Lib.Operands.Condition.negate"><code class="docutils literal notranslate"><span class="pre">Condition.negate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Operands.html#Lib.Operands.Function"><code class="docutils literal notranslate"><span class="pre">Function</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Operands.html#Lib.Operands.DataLocation"><code class="docutils literal notranslate"><span class="pre">DataLocation</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Operands.html#Lib.Operands.RegisterLike"><code class="docutils literal notranslate"><span class="pre">RegisterLike</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Operands.html#Lib.Operands.Register"><code class="docutils literal notranslate"><span class="pre">Register</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Operands.html#Lib.Operands.ZERO"><code class="docutils literal notranslate"><span class="pre">ZERO</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Operands.html#Lib.Operands.RA"><code class="docutils literal notranslate"><span class="pre">RA</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Operands.html#Lib.Operands.SP"><code class="docutils literal notranslate"><span class="pre">SP</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Operands.html#Lib.Operands.GP"><code class="docutils literal notranslate"><span class="pre">GP</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Operands.html#Lib.Operands.TP"><code class="docutils literal notranslate"><span class="pre">TP</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Operands.html#Lib.Operands.A"><code class="docutils literal notranslate"><span class="pre">A</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Operands.html#Lib.Operands.S"><code class="docutils literal notranslate"><span class="pre">S</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Operands.html#Lib.Operands.T"><code class="docutils literal notranslate"><span class="pre">T</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Operands.html#Lib.Operands.A0"><code class="docutils literal notranslate"><span class="pre">A0</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Operands.html#Lib.Operands.A1"><code class="docutils literal notranslate"><span class="pre">A1</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Operands.html#Lib.Operands.FP"><code class="docutils literal notranslate"><span class="pre">FP</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Operands.html#Lib.Operands.GP_REGS"><code class="docutils literal notranslate"><span class="pre">GP_REGS</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Operands.html#Lib.Operands.Offset"><code class="docutils literal notranslate"><span class="pre">Offset</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Operands.html#Lib.Operands.Offset.get_offset"><code class="docutils literal notranslate"><span class="pre">Offset.get_offset()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Operands.html#Lib.Operands.Immediate"><code class="docutils literal notranslate"><span class="pre">Immediate</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Operands.html#Lib.Operands.Temporary"><code class="docutils literal notranslate"><span class="pre">Temporary</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Operands.html#Lib.Operands.Temporary.get_alloced_loc"><code class="docutils literal notranslate"><span class="pre">Temporary.get_alloced_loc()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Operands.html#Lib.Operands.TemporaryPool"><code class="docutils literal notranslate"><span class="pre">TemporaryPool</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Operands.html#Lib.Operands.TemporaryPool.get_all_temps"><code class="docutils literal notranslate"><span class="pre">TemporaryPool.get_all_temps()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Operands.html#Lib.Operands.TemporaryPool.get_alloced_loc"><code class="docutils literal notranslate"><span class="pre">TemporaryPool.get_alloced_loc()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Operands.html#Lib.Operands.TemporaryPool.add_tmp"><code class="docutils literal notranslate"><span class="pre">TemporaryPool.add_tmp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Operands.html#Lib.Operands.TemporaryPool.set_temp_allocation"><code class="docutils literal notranslate"><span class="pre">TemporaryPool.set_temp_allocation()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Operands.html#Lib.Operands.TemporaryPool.fresh_tmp"><code class="docutils literal notranslate"><span class="pre">TemporaryPool.fresh_tmp()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Operands.html#Lib.Operands.Renamer"><code class="docutils literal notranslate"><span class="pre">Renamer</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Operands.html#Lib.Operands.Renamer.fresh"><code class="docutils literal notranslate"><span class="pre">Renamer.fresh()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Operands.html#Lib.Operands.Renamer.replace"><code class="docutils literal notranslate"><span class="pre">Renamer.replace()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Operands.html#Lib.Operands.Renamer.defined"><code class="docutils literal notranslate"><span class="pre">Renamer.defined()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Operands.html#Lib.Operands.Renamer.copy"><code class="docutils literal notranslate"><span class="pre">Renamer.copy()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/Lib.FunctionData.html">Base library - Function data</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.FunctionData.html#Lib.FunctionData.FunctionData"><code class="docutils literal notranslate"><span class="pre">FunctionData</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.FunctionData.html#Lib.FunctionData.FunctionData.get_name"><code class="docutils literal notranslate"><span class="pre">FunctionData.get_name()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.FunctionData.html#Lib.FunctionData.FunctionData.fresh_tmp"><code class="docutils literal notranslate"><span class="pre">FunctionData.fresh_tmp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.FunctionData.html#Lib.FunctionData.FunctionData.fresh_offset"><code class="docutils literal notranslate"><span class="pre">FunctionData.fresh_offset()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.FunctionData.html#Lib.FunctionData.FunctionData.get_offset"><code class="docutils literal notranslate"><span class="pre">FunctionData.get_offset()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.FunctionData.html#Lib.FunctionData.FunctionData.fresh_label"><code class="docutils literal notranslate"><span class="pre">FunctionData.fresh_label()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.FunctionData.html#Lib.FunctionData.FunctionData.get_label_div_by_zero"><code class="docutils literal notranslate"><span class="pre">FunctionData.get_label_div_by_zero()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/Lib.LinearCode.html">Linear intermediate representation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.LinearCode.html#Lib.LinearCode.LinearCode"><code class="docutils literal notranslate"><span class="pre">LinearCode</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.LinearCode.html#Lib.LinearCode.LinearCode.fdata"><code class="docutils literal notranslate"><span class="pre">LinearCode.fdata</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.LinearCode.html#Lib.LinearCode.LinearCode.add_statement"><code class="docutils literal notranslate"><span class="pre">LinearCode.add_statement()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.LinearCode.html#Lib.LinearCode.LinearCode.iter_statements"><code class="docutils literal notranslate"><span class="pre">LinearCode.iter_statements()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.LinearCode.html#Lib.LinearCode.LinearCode.get_instructions"><code class="docutils literal notranslate"><span class="pre">LinearCode.get_instructions()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.LinearCode.html#Lib.LinearCode.LinearCode.add_comment"><code class="docutils literal notranslate"><span class="pre">LinearCode.add_comment()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.LinearCode.html#Lib.LinearCode.LinearCode.add_instruction_PRINTLN_INT"><code class="docutils literal notranslate"><span class="pre">LinearCode.add_instruction_PRINTLN_INT()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.LinearCode.html#Lib.LinearCode.LinearCode.print_code"><code class="docutils literal notranslate"><span class="pre">LinearCode.print_code()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.LinearCode.html#Lib.LinearCode.LinearCode.print_dot"><code class="docutils literal notranslate"><span class="pre">LinearCode.print_dot()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/Lib.Allocator.html">Temporary allocation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Allocator.html#Lib.Allocator.Allocator"><code class="docutils literal notranslate"><span class="pre">Allocator</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Allocator.html#Lib.Allocator.Allocator.prepare"><code class="docutils literal notranslate"><span class="pre">Allocator.prepare()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Allocator.html#Lib.Allocator.Allocator.replace"><code class="docutils literal notranslate"><span class="pre">Allocator.replace()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Allocator.html#Lib.Allocator.Allocator.rewriteCode"><code class="docutils literal notranslate"><span class="pre">Allocator.rewriteCode()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Allocator.html#Lib.Allocator.NaiveAllocator"><code class="docutils literal notranslate"><span class="pre">NaiveAllocator</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Allocator.html#Lib.Allocator.NaiveAllocator.replace"><code class="docutils literal notranslate"><span class="pre">NaiveAllocator.replace()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Allocator.html#Lib.Allocator.NaiveAllocator.prepare"><code class="docutils literal notranslate"><span class="pre">NaiveAllocator.prepare()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<p>These pages document the various Python sources in the Lib/
+folder of MiniC. You should not have to edit them <em>at all</em>.</p>
+<section id="base-library">
+<h2>Base library<a class="headerlink" href="#base-library" title="Link to this heading"></a></h2>
+<p>The <a class="reference internal" href="api/Lib.Statement.html"><span class="doc">Lib.Statement module</span></a> defines various classes that represent
+RISC-V assembly statements, such as labels or 3-address instructions.</p>
+<p>We won’t create objects of these classes directly very often.
+Instead, to easily create such statements for standard RISC-V assembly instructions
+and pseudo-instructions, we give you the <a class="reference internal" href="api/Lib.RiscV.html"><span class="doc">Lib.RiscV module</span></a>.</p>
+<p>RISC-V instructions take arguments of various kinds,
+as defined in the <a class="reference internal" href="api/Lib.Operands.html"><span class="doc">Lib.Operands module</span></a>.</p>
+<p>At some point, we will need some basic functions about oriented and non oriented graphs,
+those are present in <span class="xref std std-doc">api/Lib.Graphes</span>.</p>
+</section>
+<section id="linear-intermediate-representation">
+<h2>Linear Intermediate representation<a class="headerlink" href="#linear-intermediate-representation" title="Link to this heading"></a></h2>
+<p>The <a class="reference internal" href="api/Lib.LinearCode.html"><span class="doc">Lib.LinearCode module</span></a> allows to work with assembly source code
+modeled as a list of statements.</p>
+</section>
+<section id="temporary-allocation">
+<h2>Temporary allocation<a class="headerlink" href="#temporary-allocation" title="Link to this heading"></a></h2>
+<p>Before implementing the all-in-memory allocator of lab 4a,
+you should understand the naive allocator in the <a class="reference internal" href="api/Lib.Allocator.html"><span class="doc">Lib.Allocator module</span></a>.</p>
+</section>
+<section id="control-flow-graph-intermediate-representation">
+<h2>Control Flow Graph Intermediate representation<a class="headerlink" href="#control-flow-graph-intermediate-representation" title="Link to this heading"></a></h2>
+<p>The classes for the CFG and its basic blocks are in the <span class="xref std std-doc">api/Lib.CFG</span>.
+Each block ends with a terminator, as documented in the <span class="xref std std-doc">api/Lib.Terminator</span>.</p>
+</section>
+<section id="ssa-form">
+<h2>SSA form<a class="headerlink" href="#ssa-form" title="Link to this heading"></a></h2>
+<p>The translation of the CFG into SSA form makes use of dominance frontiers.
+Functions to work with dominance are defined in the <span class="xref std std-doc">api/Lib.Dominators</span>.</p>
+<p>Phi nodes, a special kind of statement that appears in CFGs in SSA form,
+are defined in the <span class="xref std std-doc">api/Lib.PhiNode</span>.</p>
+</section>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading"></a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="api/Lib.Errors.html" class="btn btn-neutral float-right" title="Lib.Errors module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, compil-lyon.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

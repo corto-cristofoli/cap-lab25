@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RegAlloc.SmartAllocator &mdash; MiniC  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../_static/doctools.js?v=9bcbadda"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            MiniC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/Lib.Errors.html">Base library - Errors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/Lib.Statement.html">Base library - Statement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/Lib.RiscV.html">Base library - RISC-V instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/Lib.Operands.html">Base library - Operands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/Lib.FunctionData.html">Base library - Function data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/Lib.LinearCode.html">Linear intermediate representation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/Lib.Allocator.html">Temporary allocation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">MiniC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">RegAlloc.SmartAllocator</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for RegAlloc.SmartAllocator</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Lib.Errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">MiniCInternalError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Lib.Operands</span><span class="w"> </span><span class="kn">import</span> <span class="n">Temporary</span><span class="p">,</span> <span class="n">Operand</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">Offset</span><span class="p">,</span> <span class="n">DataLocation</span><span class="p">,</span> <span class="n">GP_REGS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Lib.Statement</span><span class="w"> </span><span class="kn">import</span> <span class="n">Instruction</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Lib.Allocator</span><span class="w"> </span><span class="kn">import</span> <span class="n">Allocator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Lib.FunctionData</span><span class="w"> </span><span class="kn">import</span> <span class="n">FunctionData</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Lib</span><span class="w"> </span><span class="kn">import</span> <span class="n">RiscV</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Lib.Graphes</span><span class="w"> </span><span class="kn">import</span> <span class="n">Graph</span>  <span class="c1"># For Graph coloring utility functions</span>
+
+
+<div class="viewcode-block" id="SmartAllocator">
+<a class="viewcode-back" href="../../api/RegAlloc.SmartAllocator.html#RegAlloc.SmartAllocator.SmartAllocator">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SmartAllocator</span><span class="p">(</span><span class="n">Allocator</span><span class="p">):</span>
+
+    <span class="n">_igraph</span><span class="p">:</span> <span class="n">Graph</span>  <span class="c1"># interference graph</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fdata</span><span class="p">:</span> <span class="n">FunctionData</span><span class="p">,</span> <span class="n">basename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">liveness</span><span class="p">,</span>
+                 <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">debug_graphs</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_liveness</span> <span class="o">=</span> <span class="n">liveness</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_basename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">basename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_debug</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">debug</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_debug_graphs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">debug_graphs</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">fdata</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SmartAllocator.replace">
+<a class="viewcode-back" href="../../api/RegAlloc.SmartAllocator.html#RegAlloc.SmartAllocator.SmartAllocator.replace">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">replace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">old_instr</span><span class="p">:</span> <span class="n">Instruction</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Instruction</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Replace Temporary operands with the corresponding allocated</span>
+<span class="sd">        physical register (Register) OR memory location (Offset).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">before</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Instruction</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">after</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Instruction</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">new_args</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Operand</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># UNCOMMENT # TODO (lab5): Compute before, after, subst. This is similar to what</span>
+        <span class="c1"># UNCOMMENT # TODO (lab5): replace from the Naive and AllInMem Allocators do (Lab 4).</span>
+        <span class="c1"># BEGIN CUT</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">numreg</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">old_instr</span><span class="o">.</span><span class="n">args</span><span class="p">():</span>
+            <span class="n">new_arg</span> <span class="o">=</span> <span class="n">arg</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">Temporary</span><span class="p">):</span>
+                <span class="n">loc</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">get_alloced_loc</span><span class="p">()</span>  <span class="c1"># Offset or Register</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">loc</span><span class="p">,</span> <span class="n">Offset</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">pos</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">old_instr</span><span class="o">.</span><span class="n">is_read_only</span><span class="p">():</span>
+                        <span class="c1"># Write the content of s2 into address FP+offset*16.</span>
+                        <span class="c1"># destination operand =&gt; add store after</span>
+                        <span class="c1"># We&#39;re re-using s2 as destination register, possibly</span>
+                        <span class="c1"># already as source register. It&#39;s harmless (e.g. add</span>
+                        <span class="c1"># s2, s2, s1), but paranoid people may prefer using</span>
+                        <span class="c1"># s3, therefore we don&#39;t consider s3 as a</span>
+                        <span class="c1"># general-purpose register.</span>
+                        <span class="n">new_arg</span> <span class="o">=</span> <span class="n">S</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+                        <span class="n">after</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">RiscV</span><span class="o">.</span><span class="n">sd</span><span class="p">(</span><span class="n">new_arg</span><span class="p">,</span> <span class="n">loc</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c1"># source operand =&gt; add load before</span>
+                        <span class="n">new_arg</span> <span class="o">=</span> <span class="n">S</span><span class="p">[</span><span class="n">numreg</span><span class="p">]</span>
+                        <span class="n">numreg</span> <span class="o">+=</span> <span class="mi">1</span>  <span class="c1"># Use a different register for each source operand</span>
+                        <span class="n">before</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">RiscV</span><span class="o">.</span><span class="n">ld</span><span class="p">(</span><span class="n">new_arg</span><span class="p">,</span> <span class="n">loc</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">new_arg</span> <span class="o">=</span> <span class="n">loc</span>
+            <span class="n">new_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_arg</span><span class="p">)</span>
+            <span class="n">pos</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="c1"># END CUT</span>
+        <span class="c1"># UNCOMMENT raise NotImplementedError(&quot;Smart Replace (lab5)&quot;) # TODO</span>
+        <span class="c1"># And now return the new list!</span>
+        <span class="n">instr</span> <span class="o">=</span> <span class="n">old_instr</span><span class="o">.</span><span class="n">with_args</span><span class="p">(</span><span class="n">new_args</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">before</span> <span class="o">+</span> <span class="p">[</span><span class="n">instr</span><span class="p">]</span> <span class="o">+</span> <span class="n">after</span></div>
+
+
+<div class="viewcode-block" id="SmartAllocator.prepare">
+<a class="viewcode-back" href="../../api/RegAlloc.SmartAllocator.html#RegAlloc.SmartAllocator.SmartAllocator.prepare">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">prepare</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform all preparatory steps related to smart register allocation:</span>
+
+<span class="sd">        - Dataflow analysis to compute the liveness range of each</span>
+<span class="sd">          temporary.</span>
+<span class="sd">        - Interference graph construction.</span>
+<span class="sd">        - Graph coloring.</span>
+<span class="sd">        - Associating temporaries with actual locations.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Liveness analysis</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_liveness</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+        <span class="c1"># Interference graph</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">build_interference_graph</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_debug_graphs</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Printing the interference graph&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_igraph</span><span class="o">.</span><span class="n">print_dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_basename</span> <span class="o">+</span> <span class="s2">&quot;interference.dot&quot;</span><span class="p">)</span>
+        <span class="c1"># Smart Allocation via graph coloring</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">smart_alloc</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="SmartAllocator.build_interference_graph">
+<a class="viewcode-back" href="../../api/RegAlloc.SmartAllocator.html#RegAlloc.SmartAllocator.SmartAllocator.build_interference_graph">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_interference_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build the interference graph (in self._igraph).</span>
+<span class="sd">        Vertices of the graph are temporaries,</span>
+<span class="sd">        and an edge exists between temporaries iff they are in conflict.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_igraph</span><span class="p">:</span> <span class="n">Graph</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">()</span>
+        <span class="c1"># Create a vertex for every temporary</span>
+        <span class="c1"># There may be temporaries the code does not use anymore,</span>
+        <span class="c1"># but it does not matter as they interfere with no one.</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fdata</span><span class="o">.</span><span class="n">_pool</span><span class="o">.</span><span class="n">get_all_temps</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_igraph</span><span class="o">.</span><span class="n">add_vertex</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="c1"># Iterate over self._liveness._liveout (dictionary containing all</span>
+        <span class="c1"># live out temporaries for each instruction), and for each conflict use</span>
+        <span class="c1"># self._igraph.add_edge((t1, t2)) to add the corresponding edge.</span>
+        <span class="c1"># BEGIN CUT</span>
+        <span class="k">for</span> <span class="n">maybe_instr</span><span class="p">,</span> <span class="n">liveset</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_liveness</span><span class="o">.</span><span class="n">_liveout</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">instr</span> <span class="o">=</span> <span class="n">maybe_instr</span>
+
+            <span class="k">for</span> <span class="n">t1</span> <span class="ow">in</span> <span class="n">liveset</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t1</span><span class="p">,</span> <span class="n">Temporary</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">t2</span> <span class="ow">in</span> <span class="n">liveset</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t2</span><span class="p">,</span> <span class="n">Temporary</span><span class="p">):</span>
+                            <span class="k">if</span> <span class="n">t1</span> <span class="o">!=</span> <span class="n">t2</span><span class="p">:</span>  <span class="c1"># A temporary cannot conflict with itself</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">_igraph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">((</span><span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">instr</span><span class="o">.</span><span class="n">defined</span><span class="p">():</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">Temporary</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">t2</span> <span class="ow">in</span> <span class="n">liveset</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t2</span><span class="p">,</span> <span class="n">Temporary</span><span class="p">):</span>
+                            <span class="k">if</span> <span class="n">d</span> <span class="o">!=</span> <span class="n">t2</span><span class="p">:</span>  <span class="c1"># A temporary cannot conflict with itself</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">_igraph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">((</span><span class="n">d</span><span class="p">,</span> <span class="n">t2</span><span class="p">))</span></div>
+
+        <span class="c1"># END CUT</span>
+        <span class="c1"># UNCOMMENT raise NotImplementedError(&quot;build_interference_graph (lab5)&quot;) # TODO</span>
+
+<div class="viewcode-block" id="SmartAllocator.smart_alloc">
+<a class="viewcode-back" href="../../api/RegAlloc.SmartAllocator.html#RegAlloc.SmartAllocator.SmartAllocator.smart_alloc">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">smart_alloc</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Allocates all temporaries via graph coloring.</span>
+<span class="sd">        Prints the colored graph if self._debug_graphs is True.</span>
+
+<span class="sd">        Precondition: the interference graph _igraph must have been built.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Checking the interference graph has been built</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_igraph</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">MiniCInternalError</span><span class="p">(</span><span class="s2">&quot;Empty interference graph in the Smart Allocator&quot;</span><span class="p">)</span>
+        <span class="c1"># Coloring of the interference graph</span>
+        <span class="n">coloringreg</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Temporary</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_igraph</span><span class="o">.</span><span class="n">color</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_debug_graphs</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;coloring = &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">coloringreg</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_igraph</span><span class="o">.</span><span class="n">print_dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_basename</span> <span class="o">+</span> <span class="s2">&quot;_colored.dot&quot;</span><span class="p">,</span> <span class="n">coloringreg</span><span class="p">)</span>
+        <span class="c1"># Temporary -&gt; DataLocation (Register or Offset) dictionary,</span>
+        <span class="c1"># specifying where a given Temporary should be allocated:</span>
+        <span class="n">alloc_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Temporary</span><span class="p">,</span> <span class="n">DataLocation</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="c1"># Use the coloring `coloringreg` to fill `alloc_dict`.</span>
+        <span class="c1"># Our version is less than 5 lines of code.</span>
+        <span class="c1"># BEGIN CUT</span>
+        <span class="n">locations</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DataLocation</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">GP_REGS</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="k">if</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">GP_REGS</span><span class="p">)</span>
+                                         <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fdata</span><span class="o">.</span><span class="n">fresh_offset</span><span class="p">()</span>
+                                         <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">coloringreg</span><span class="o">.</span><span class="n">values</span><span class="p">())]</span>
+        <span class="n">alloc_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">temp</span><span class="p">:</span> <span class="n">locations</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="k">for</span> <span class="p">(</span><span class="n">temp</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span> <span class="ow">in</span> <span class="n">coloringreg</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="c1"># END CUT</span>
+        <span class="c1"># UNCOMMENT raise NotImplementedError(&quot;Allocation based on graph coloring (lab5)&quot;) # TODO</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_debug</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Allocation:&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">alloc_dict</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fdata</span><span class="o">.</span><span class="n">_pool</span><span class="o">.</span><span class="n">set_temp_allocation</span><span class="p">(</span><span class="n">alloc_dict</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, compil-lyon.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

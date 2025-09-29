@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RegAlloc.EnterSSA &mdash; MiniC  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../_static/doctools.js?v=9bcbadda"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            MiniC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/Lib.Errors.html">Base library - Errors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/Lib.Statement.html">Base library - Statement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/Lib.RiscV.html">Base library - RISC-V instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/Lib.Operands.html">Base library - Operands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/Lib.FunctionData.html">Base library - Function data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/Lib.LinearCode.html">Linear intermediate representation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/Lib.Allocator.html">Temporary allocation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">MiniC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">RegAlloc.EnterSSA</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for RegAlloc.EnterSSA</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">CAP, SSA Intro, Elimination and Optimisations</span>
+<span class="sd">Functions to convert a CFG into SSA Form.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Set</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Lib.CFG</span><span class="w"> </span><span class="kn">import</span> <span class="n">Block</span><span class="p">,</span> <span class="n">CFG</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Lib.Operands</span><span class="w"> </span><span class="kn">import</span> <span class="n">Renamer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Lib.Statement</span><span class="w"> </span><span class="kn">import</span> <span class="n">Instruction</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Lib.PhiNode</span><span class="w"> </span><span class="kn">import</span> <span class="n">PhiNode</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Lib.Dominators</span><span class="w"> </span><span class="kn">import</span> <span class="n">computeDom</span><span class="p">,</span> <span class="n">computeDT</span><span class="p">,</span> <span class="n">computeDF</span>
+
+
+<div class="viewcode-block" id="insertPhis">
+<a class="viewcode-back" href="../../api/RegAlloc.EnterSSA.html#RegAlloc.EnterSSA.insertPhis">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">insertPhis</span><span class="p">(</span><span class="n">cfg</span><span class="p">:</span> <span class="n">CFG</span><span class="p">,</span> <span class="n">DF</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Block</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="n">Block</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    `insertPhis(CFG, DF)` inserts phi nodes in `cfg` where needed.</span>
+<span class="sd">    At this point, phi nodes will look like `temp_x = φ(temp_x, ..., temp_x)`.</span>
+
+<span class="sd">    This is an helper function called during SSA entry.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">defs</span> <span class="ow">in</span> <span class="n">cfg</span><span class="o">.</span><span class="n">gather_defs</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">has_phi</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">Block</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">queue</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Block</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">defs</span><span class="p">)</span>
+        <span class="k">while</span> <span class="n">queue</span><span class="p">:</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">DF</span><span class="p">[</span><span class="n">d</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">b</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">has_phi</span><span class="p">:</span>
+                    <span class="c1"># UNCOMMENT # TODO add a phi node in block `b` (Lab 5a, Exercise 4)</span>
+                    <span class="c1"># UNCOMMENT raise NotImplementedError(&quot;insertPhis&quot;)</span>
+                    <span class="c1"># BEGIN CUT</span>
+                    <span class="n">has_phi</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+                    <span class="n">srcs</span> <span class="o">=</span> <span class="p">{</span><span class="n">pred_b</span><span class="o">.</span><span class="n">get_label</span><span class="p">():</span> <span class="n">var</span> <span class="k">for</span> <span class="n">pred_b</span> <span class="ow">in</span> <span class="n">b</span><span class="o">.</span><span class="n">get_in</span><span class="p">()}</span>
+                    <span class="n">phi</span> <span class="o">=</span> <span class="n">PhiNode</span><span class="p">(</span><span class="n">var</span><span class="o">=</span><span class="n">var</span><span class="p">,</span> <span class="n">srcs</span><span class="o">=</span><span class="n">srcs</span><span class="p">)</span>
+                    <span class="n">b</span><span class="o">.</span><span class="n">add_phi</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
+                    <span class="n">queue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">b</span><span class="p">)</span></div>
+
+                    <span class="c1"># END CUT</span>
+
+
+<div class="viewcode-block" id="rename_block">
+<a class="viewcode-back" href="../../api/RegAlloc.EnterSSA.html#RegAlloc.EnterSSA.rename_block">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">rename_block</span><span class="p">(</span><span class="n">cfg</span><span class="p">:</span> <span class="n">CFG</span><span class="p">,</span> <span class="n">DT</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Block</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="n">Block</span><span class="p">]],</span> <span class="n">renamer</span><span class="p">:</span> <span class="n">Renamer</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">Block</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Rename variables from block b.</span>
+
+<span class="sd">    This is an auxiliary function for `rename_variables`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">renamer</span> <span class="o">=</span> <span class="n">renamer</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">b</span><span class="o">.</span><span class="n">get_all_statements</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">Instruction</span> <span class="o">|</span> <span class="n">PhiNode</span><span class="p">):</span>
+            <span class="n">i</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">renamer</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">succ</span> <span class="ow">in</span> <span class="n">cfg</span><span class="o">.</span><span class="n">out_blocks</span><span class="p">(</span><span class="n">b</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">succ</span><span class="o">.</span><span class="n">get_phis</span><span class="p">():</span>
+            <span class="k">assert</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">PhiNode</span><span class="p">))</span>
+            <span class="n">i</span><span class="o">.</span><span class="n">rename_from</span><span class="p">(</span><span class="n">renamer</span><span class="p">,</span> <span class="n">b</span><span class="o">.</span><span class="n">get_label</span><span class="p">())</span>
+    <span class="c1"># UNCOMMENT # TODO recursive call(s) of rename_block (Lab 5a, Exercise 5)</span>
+    <span class="c1"># BEGIN CUT</span>
+    <span class="k">for</span> <span class="n">succ</span> <span class="ow">in</span> <span class="n">DT</span><span class="p">[</span><span class="n">b</span><span class="p">]:</span>
+        <span class="n">rename_block</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">DT</span><span class="p">,</span> <span class="n">renamer</span><span class="p">,</span> <span class="n">succ</span><span class="p">)</span></div>
+
+    <span class="c1"># END CUT</span>
+
+
+<div class="viewcode-block" id="rename_variables">
+<a class="viewcode-back" href="../../api/RegAlloc.EnterSSA.html#RegAlloc.EnterSSA.rename_variables">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">rename_variables</span><span class="p">(</span><span class="n">cfg</span><span class="p">:</span> <span class="n">CFG</span><span class="p">,</span> <span class="n">DT</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Block</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="n">Block</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Rename variables in the CFG, to transform `temp_x = φ(temp_x, ..., temp_x)`</span>
+<span class="sd">    into `temp_x = φ(temp_0, ... temp_n)`.</span>
+
+<span class="sd">    This is an helper function called during SSA entry.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">renamer</span> <span class="o">=</span> <span class="n">Renamer</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">fdata</span><span class="o">.</span><span class="n">_pool</span><span class="p">)</span>
+    <span class="c1"># UNCOMMENT # TODO initial call(s) to rename_block (Lab 5a, Exercise 5)</span>
+    <span class="c1"># BEGIN CUT</span>
+    <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">cfg</span><span class="o">.</span><span class="n">get_entries</span><span class="p">():</span>
+        <span class="n">rename_block</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">DT</span><span class="p">,</span> <span class="n">renamer</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span></div>
+
+    <span class="c1"># END CUT</span>
+
+
+<div class="viewcode-block" id="enter_ssa">
+<a class="viewcode-back" href="../../api/RegAlloc.EnterSSA.html#RegAlloc.EnterSSA.enter_ssa">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">enter_ssa</span><span class="p">(</span><span class="n">cfg</span><span class="p">:</span> <span class="n">CFG</span><span class="p">,</span> <span class="n">dom_graphs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="s2">&quot;prog&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert the CFG `cfg` into SSA Form:</span>
+<span class="sd">    compute the dominance frontier, then insert phi nodes and finally</span>
+<span class="sd">    rename variables accordingly.</span>
+
+<span class="sd">    `dom_graphs` indicates if we have to print the domination graphs.</span>
+<span class="sd">    `basename` is used for the names of the produced graphs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># UNCOMMENT # TODO implement this function (Lab 5a, Exercise 2)</span>
+    <span class="c1"># UNCOMMENT raise NotImplementedError(&quot;enter_ssa&quot;)</span>
+    <span class="c1"># BEGIN CUT</span>
+    <span class="c1"># 1. Compute the dominators</span>
+    <span class="n">dominators</span> <span class="o">=</span> <span class="n">computeDom</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+    <span class="c1"># 2. Compute the domination tree</span>
+    <span class="n">DT</span> <span class="o">=</span> <span class="n">computeDT</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">dominators</span><span class="p">,</span> <span class="n">dom_graphs</span><span class="p">,</span> <span class="n">basename</span><span class="p">)</span>
+    <span class="c1"># 3. Compute the dominance frontier</span>
+    <span class="n">DF</span> <span class="o">=</span> <span class="n">computeDF</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">dominators</span><span class="p">,</span> <span class="n">DT</span><span class="p">,</span> <span class="n">dom_graphs</span><span class="p">,</span> <span class="n">basename</span><span class="p">)</span>
+    <span class="c1"># 4. Insert phi nodes</span>
+    <span class="n">insertPhis</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">DF</span><span class="p">)</span>
+    <span class="c1"># 5. Rename variables</span>
+    <span class="n">rename_variables</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">DT</span><span class="p">)</span></div>
+
+    <span class="c1"># END CUT</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, compil-lyon.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

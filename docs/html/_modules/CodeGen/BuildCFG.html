@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CodeGen.BuildCFG &mdash; MiniC  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../_static/doctools.js?v=9bcbadda"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            MiniC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/Lib.Errors.html">Base library - Errors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/Lib.Statement.html">Base library - Statement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/Lib.RiscV.html">Base library - RISC-V instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/Lib.Operands.html">Base library - Operands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/Lib.FunctionData.html">Base library - Function data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/Lib.LinearCode.html">Linear intermediate representation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/Lib.Allocator.html">Temporary allocation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">MiniC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">CodeGen.BuildCFG</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for CodeGen.BuildCFG</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">CAP, CodeGeneration, CFG construction from linear code</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Lib.Errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">MiniCInternalError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Lib.FunctionData</span><span class="w"> </span><span class="kn">import</span> <span class="n">FunctionData</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Lib.LinearCode</span><span class="w"> </span><span class="kn">import</span> <span class="n">LinearCode</span><span class="p">,</span> <span class="n">CodeStatement</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Lib.Statement</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Instru3A</span><span class="p">,</span> <span class="n">Comment</span><span class="p">,</span> <span class="n">Label</span><span class="p">,</span> <span class="n">AbsoluteJump</span><span class="p">,</span> <span class="n">ConditionalJump</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Lib.Terminator</span><span class="w"> </span><span class="kn">import</span> <span class="n">jump2terminator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Lib.CFG</span><span class="w"> </span><span class="kn">import</span> <span class="n">Block</span><span class="p">,</span> <span class="n">BlockInstr</span><span class="p">,</span> <span class="n">CFG</span>
+
+
+<div class="viewcode-block" id="find_leaders">
+<a class="viewcode-back" href="../../api/CodeGen.BuildCFG.html#CodeGen.BuildCFG.find_leaders">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_leaders</span><span class="p">(</span><span class="n">instructions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">CodeStatement</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find the leaders in the given list of instructions as linear code.</span>
+<span class="sd">    Returns a list of indices in the instruction list whose first is 0 and</span>
+<span class="sd">    last is len(instructions)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">leaders</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="c1"># UNCOMMENT # TODO fill leaders</span>
+    <span class="c1"># BEGIN CUT</span>
+    <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">instr</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">instructions</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instr</span><span class="p">,</span> <span class="n">AbsoluteJump</span> <span class="o">|</span> <span class="n">ConditionalJump</span><span class="p">):</span>
+            <span class="n">leaders</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instr</span><span class="p">,</span> <span class="n">Label</span><span class="p">):</span>
+            <span class="n">leaders</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="c1"># END CUT</span>
+    <span class="c1"># The final &quot;ret&quot; is also a form of jump</span>
+    <span class="n">leaders</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">instructions</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">leaders</span></div>
+
+
+
+<div class="viewcode-block" id="separate_with_leaders">
+<a class="viewcode-back" href="../../api/CodeGen.BuildCFG.html#CodeGen.BuildCFG.separate_with_leaders">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">separate_with_leaders</span><span class="p">(</span><span class="n">instructions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">CodeStatement</span><span class="p">],</span>
+                          <span class="n">leaders</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">CodeStatement</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Partition the lists instructions into a list containing for</span>
+<span class="sd">    elements the lists of statements between indices</span>
+<span class="sd">    leaders[i] (included) and leaders[i+1] (excluded).</span>
+
+<span class="sd">    If leaders[i] = leaders[i+1], do not add the empty list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">chunks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">CodeStatement</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">leaders</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">leaders</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">leaders</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">start</span> <span class="o">!=</span> <span class="n">end</span><span class="p">:</span>
+            <span class="c1"># Avoid corner-cases when a label immediately follows a jump</span>
+            <span class="n">chunks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">instructions</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">chunks</span></div>
+
+
+
+<div class="viewcode-block" id="prepare_chunk">
+<a class="viewcode-back" href="../../api/CodeGen.BuildCFG.html#CodeGen.BuildCFG.prepare_chunk">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">prepare_chunk</span><span class="p">(</span><span class="n">pre_chunk</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">CodeStatement</span><span class="p">],</span> <span class="n">fdata</span><span class="p">:</span> <span class="n">FunctionData</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span>
+                  <span class="n">Label</span><span class="p">,</span> <span class="n">ConditionalJump</span> <span class="o">|</span> <span class="n">AbsoluteJump</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">BlockInstr</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract the potential label (respectively jump)</span>
+<span class="sd">    at the start (respectively end) of the list instrs_chunk,</span>
+<span class="sd">    and return the tuple with this label, this jump and the</span>
+<span class="sd">    rest of instrs_chunk.</span>
+
+<span class="sd">    If there is no label at the start then return a fresh label instead,</span>
+<span class="sd">    thanks to fdata (use `fdata.fresh_label(fdata._name)` for instance).</span>
+<span class="sd">    If there is no jump at the end, return None instead.</span>
+
+<span class="sd">    Raise an error if there is a label not in first position in pre_chunk,</span>
+<span class="sd">    or a jump not in last position.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">label</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">jump</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">inner_statements</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">CodeStatement</span><span class="p">]</span> <span class="o">=</span> <span class="n">pre_chunk</span>
+    <span class="c1"># Extract the first instruction from inner_statements if it is a label, or create a fresh one</span>
+    <span class="c1"># BEGIN CUT</span>
+    <span class="n">maybe_label</span> <span class="o">=</span> <span class="n">inner_statements</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">maybe_label</span><span class="p">,</span> <span class="n">Label</span><span class="p">):</span>
+        <span class="n">inner_statements</span> <span class="o">=</span> <span class="n">inner_statements</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>  <span class="c1"># Remove the Label</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">maybe_label</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">fdata</span><span class="o">.</span><span class="n">fresh_label</span><span class="p">(</span><span class="n">fdata</span><span class="o">.</span><span class="n">_name</span><span class="p">)</span>
+    <span class="c1"># END CUT</span>
+    <span class="c1"># UNCOMMENT raise NotImplementedError() # TODO</span>
+    <span class="c1"># Extract the last instruction from inner_statements if it is a jump, or do nothing</span>
+    <span class="c1"># BEGIN CUT</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">inner_statements</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># pre_chunk has size 1 if there are two successive labels</span>
+        <span class="n">maybe_jump</span> <span class="o">=</span> <span class="n">inner_statements</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">maybe_jump</span><span class="p">,</span> <span class="n">AbsoluteJump</span> <span class="o">|</span> <span class="n">ConditionalJump</span><span class="p">):</span>
+            <span class="n">inner_statements</span> <span class="o">=</span> <span class="n">inner_statements</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># Remove the Jump</span>
+            <span class="n">jump</span> <span class="o">=</span> <span class="n">maybe_jump</span>
+    <span class="c1"># END CUT</span>
+    <span class="c1"># UNCOMMENT raise NotImplementedError() # TODO</span>
+    <span class="c1"># Check that there is no other label or jump left in inner_statements</span>
+    <span class="n">l</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">BlockInstr</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">inner_statements</span><span class="p">:</span>
+        <span class="k">match</span> <span class="n">i</span><span class="p">:</span>
+            <span class="k">case</span> <span class="n">AbsoluteJump</span><span class="p">()</span> <span class="o">|</span> <span class="n">ConditionalJump</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="n">MiniCInternalError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;prepare_chunk: Jump </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2"> not in last position of a chunk&quot;</span><span class="p">)</span>
+            <span class="k">case</span> <span class="n">Label</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="n">MiniCInternalError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;prepare_chunk: Label </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2"> not in first position of a chunk&quot;</span><span class="p">)</span>
+            <span class="k">case</span> <span class="n">Instru3A</span><span class="p">()</span> <span class="o">|</span> <span class="n">Comment</span><span class="p">():</span>
+                <span class="n">l</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">jump</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="build_cfg">
+<a class="viewcode-back" href="../../api/CodeGen.BuildCFG.html#CodeGen.BuildCFG.build_cfg">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_cfg</span><span class="p">(</span><span class="n">linCode</span><span class="p">:</span> <span class="n">LinearCode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CFG</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract the blocks from the linear code and add them to the CFG.&quot;&quot;&quot;</span>
+    <span class="n">fdata</span> <span class="o">=</span> <span class="n">linCode</span><span class="o">.</span><span class="n">fdata</span>
+    <span class="n">cfg</span> <span class="o">=</span> <span class="n">CFG</span><span class="p">(</span><span class="n">fdata</span><span class="p">)</span>
+    <span class="n">instructions</span> <span class="o">=</span> <span class="n">linCode</span><span class="o">.</span><span class="n">get_instructions</span><span class="p">()</span>
+    <span class="c1"># 1. Identify Leaders</span>
+    <span class="n">leaders</span> <span class="o">=</span> <span class="n">find_leaders</span><span class="p">(</span><span class="n">instructions</span><span class="p">)</span>
+    <span class="c1"># 2. Extract Chunks of Instructions</span>
+    <span class="n">pre_chunks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">CodeStatement</span><span class="p">]]</span> <span class="o">=</span> <span class="n">separate_with_leaders</span><span class="p">(</span><span class="n">instructions</span><span class="p">,</span> <span class="n">leaders</span><span class="p">)</span>
+    <span class="n">chunks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">Label</span><span class="p">,</span> <span class="n">ConditionalJump</span> <span class="o">|</span> <span class="n">AbsoluteJump</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">BlockInstr</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">prepare_chunk</span><span class="p">(</span><span class="n">pre_chunk</span><span class="p">,</span> <span class="n">fdata</span><span class="p">)</span> <span class="k">for</span> <span class="n">pre_chunk</span> <span class="ow">in</span> <span class="n">pre_chunks</span><span class="p">]</span>
+    <span class="c1"># 3. Build the Blocks</span>
+    <span class="n">next_label</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">jump</span><span class="p">,</span> <span class="n">block_instrs</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">chunks</span><span class="p">):</span>
+        <span class="n">term</span> <span class="o">=</span> <span class="n">jump2terminator</span><span class="p">(</span><span class="n">jump</span><span class="p">,</span> <span class="n">next_label</span><span class="p">)</span>
+        <span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">block_instrs</span><span class="p">,</span> <span class="n">term</span><span class="p">)</span>
+        <span class="n">cfg</span><span class="o">.</span><span class="n">add_block</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+        <span class="n">next_label</span> <span class="o">=</span> <span class="n">label</span>
+    <span class="c1"># 4. Fill the edges</span>
+    <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">cfg</span><span class="o">.</span><span class="n">get_blocks</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">dest</span> <span class="ow">in</span> <span class="n">cfg</span><span class="o">.</span><span class="n">out_blocks</span><span class="p">(</span><span class="n">block</span><span class="p">):</span>
+            <span class="n">cfg</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">dest</span><span class="p">)</span>
+    <span class="c1"># 5. Identify the entry label of the CFG</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">set_start</span><span class="p">(</span><span class="n">chunks</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">cfg</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, compil-lyon.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

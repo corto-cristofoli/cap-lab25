@@ -1,0 +1,7 @@
+RegAlloc.ExitSSA module
+=======================
+
+.. automodule:: RegAlloc.ExitSSA
+   :members:
+   :show-inheritance:
+   :undoc-members:

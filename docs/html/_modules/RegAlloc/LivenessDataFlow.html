@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RegAlloc.LivenessDataFlow &mdash; MiniC  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../_static/doctools.js?v=9bcbadda"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            MiniC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/Lib.Errors.html">Base library - Errors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/Lib.Statement.html">Base library - Statement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/Lib.RiscV.html">Base library - RISC-V instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/Lib.Operands.html">Base library - Operands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/Lib.FunctionData.html">Base library - Function data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/Lib.LinearCode.html">Linear intermediate representation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/Lib.Allocator.html">Temporary allocation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">MiniC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">RegAlloc.LivenessDataFlow</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for RegAlloc.LivenessDataFlow</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Set</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Lib.Operands</span><span class="w"> </span><span class="kn">import</span> <span class="n">Operand</span><span class="p">,</span> <span class="n">Temporary</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Lib.Statement</span><span class="w"> </span><span class="kn">import</span> <span class="n">Statement</span><span class="p">,</span> <span class="n">Instruction</span><span class="p">,</span> <span class="n">regset_to_string</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Lib.CFG</span><span class="w"> </span><span class="kn">import</span> <span class="n">CFG</span><span class="p">,</span> <span class="n">Block</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+
+
+<div class="viewcode-block" id="LivenessDataFlow">
+<a class="viewcode-back" href="../../api/RegAlloc.LivenessDataFlow.html#RegAlloc.LivenessDataFlow.LivenessDataFlow">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">LivenessDataFlow</span><span class="p">:</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_function</span><span class="p">:</span> <span class="n">CFG</span> <span class="o">=</span> <span class="n">function</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_debug</span> <span class="o">=</span> <span class="n">debug</span>
+        <span class="c1"># Live Operands at input and output of blocks</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_blockin</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Block</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="n">Operand</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_blockout</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Block</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="n">Operand</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1"># Live Operands at outputs of instructions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_liveout</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">Block</span><span class="p">,</span> <span class="n">Statement</span><span class="p">],</span> <span class="n">Set</span><span class="p">[</span><span class="n">Operand</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="LivenessDataFlow.run">
+<a class="viewcode-back" href="../../api/RegAlloc.LivenessDataFlow.html#RegAlloc.LivenessDataFlow.LivenessDataFlow.run">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_gen_kill</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_debug</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">print_gen_kill</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">run_dataflow_analysis</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_debug</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">print_map_in_out</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">fill_liveout</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="LivenessDataFlow.set_gen_kill">
+<a class="viewcode-back" href="../../api/RegAlloc.LivenessDataFlow.html#RegAlloc.LivenessDataFlow.LivenessDataFlow.set_gen_kill">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_gen_kill</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the _gen and _kill field for each block in the function.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">blk</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_function</span><span class="o">.</span><span class="n">get_blocks</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_gen_kill_in_block</span><span class="p">(</span><span class="n">blk</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LivenessDataFlow.set_gen_kill_in_block">
+<a class="viewcode-back" href="../../api/RegAlloc.LivenessDataFlow.html#RegAlloc.LivenessDataFlow.LivenessDataFlow.set_gen_kill_in_block">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_gen_kill_in_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="p">:</span> <span class="n">Block</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">gen</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">kill</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="n">get_all_statements</span><span class="p">():</span>
+            <span class="c1"># Reminder: &#39;|&#39; is set union, &#39;-&#39; is subtraction.</span>
+            <span class="c1"># UNCOMMENT raise NotImplementedError()</span>
+            <span class="c1"># BEGIN CUT</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">Instruction</span><span class="p">):</span>
+                <span class="n">used_tmps</span> <span class="o">=</span> <span class="p">{</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">i</span><span class="o">.</span><span class="n">used</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">Temporary</span><span class="p">)}</span>
+                <span class="n">def_tmp</span> <span class="o">=</span> <span class="p">{</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">i</span><span class="o">.</span><span class="n">defined</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">Temporary</span><span class="p">)}</span>
+                <span class="n">gen</span> <span class="o">=</span> <span class="n">gen</span> <span class="o">|</span> <span class="p">(</span><span class="n">used_tmps</span> <span class="o">-</span> <span class="n">kill</span><span class="p">)</span>
+                <span class="n">kill</span> <span class="o">=</span> <span class="n">kill</span> <span class="o">|</span> <span class="n">def_tmp</span>
+            <span class="c1"># END CUT</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">_gen</span> <span class="o">=</span> <span class="n">gen</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">_kill</span> <span class="o">=</span> <span class="n">kill</span></div>
+
+
+<div class="viewcode-block" id="LivenessDataFlow.run_dataflow_analysis">
+<a class="viewcode-back" href="../../api/RegAlloc.LivenessDataFlow.html#RegAlloc.LivenessDataFlow.LivenessDataFlow.run_dataflow_analysis">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run_dataflow_analysis</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run the dataflow liveness analysis, i.e. compute self._blockin and</span>
+<span class="sd">        self._blockout based on the ._kill and ._gen fields of individual</span>
+<span class="sd">        instructions.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_debug</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Dataflow Analysis&quot;</span><span class="p">)</span>
+        <span class="c1"># BEGIN CUT(dataflow)</span>
+        <span class="n">countit</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1"># END CUT(dataflow)</span>
+        <span class="c1"># initialisation of all blockout,blockin sets, and def = kill</span>
+        <span class="k">for</span> <span class="n">blk</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_function</span><span class="o">.</span><span class="n">get_blocks</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_blockin</span><span class="p">[</span><span class="n">blk</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_blockout</span><span class="p">[</span><span class="n">blk</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">stable</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">stable</span><span class="p">:</span>
+            <span class="c1"># Iterate until fixpoint :</span>
+            <span class="c1"># make calls to self._function.dataflow_one_step</span>
+            <span class="c1"># UNCOMMENT(dataflow) stable = True  # CHANGE</span>
+            <span class="c1"># BEGIN CUT(dataflow)</span>
+            <span class="n">countit</span> <span class="o">=</span> <span class="n">countit</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">saveoldout</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_blockout</span><span class="p">)</span>
+            <span class="n">saveoldin</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_blockin</span><span class="p">)</span>  <span class="c1"># structure copy</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dataflow_one_step</span><span class="p">()</span>
+            <span class="n">stable</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">for</span> <span class="n">blk</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_function</span><span class="o">.</span><span class="n">get_blocks</span><span class="p">():</span>
+                <span class="c1"># sets are growing.</span>
+                <span class="c1"># print (self._blockout[i])</span>
+                <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_blockout</span><span class="p">[</span><span class="n">blk</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">saveoldout</span><span class="p">[</span><span class="n">blk</span><span class="p">]</span> <span class="ow">or</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_blockin</span><span class="p">[</span><span class="n">blk</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">saveoldin</span><span class="p">[</span><span class="n">blk</span><span class="p">]):</span>
+                    <span class="n">stable</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_debug</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;finished in &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">countit</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; iterations&quot;</span><span class="p">)</span></div>
+
+        <span class="c1"># print(self._blockin)</span>
+        <span class="c1"># print(self._blockout)</span>
+        <span class="c1"># END CUT(dataflow)</span>
+        <span class="c1"># UNCOMMENT(dataflow) # TODO (lab5) ! (perform iterations until fixpoint).</span>
+
+<div class="viewcode-block" id="LivenessDataFlow.dataflow_one_step">
+<a class="viewcode-back" href="../../api/RegAlloc.LivenessDataFlow.html#RegAlloc.LivenessDataFlow.LivenessDataFlow.dataflow_one_step">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dataflow_one_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run one iteration of the dataflow analysis. This function is meant</span>
+<span class="sd">        to be run iteratively until fixpoint.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">blk</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_function</span><span class="o">.</span><span class="n">get_blocks</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_blockout</span><span class="p">[</span><span class="n">blk</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">child_label</span> <span class="ow">in</span> <span class="n">blk</span><span class="o">.</span><span class="n">get_terminator</span><span class="p">()</span><span class="o">.</span><span class="n">targets</span><span class="p">():</span>
+                <span class="n">child</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_function</span><span class="o">.</span><span class="n">get_block</span><span class="p">(</span><span class="n">child_label</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_blockout</span><span class="p">[</span><span class="n">blk</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_blockout</span><span class="p">[</span><span class="n">blk</span><span class="p">]</span> <span class="o">|</span> <span class="bp">self</span><span class="o">.</span><span class="n">_blockin</span><span class="p">[</span><span class="n">child</span><span class="p">]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_blockin</span><span class="p">[</span><span class="n">blk</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_blockout</span><span class="p">[</span><span class="n">blk</span><span class="p">]</span> <span class="o">-</span> <span class="n">blk</span><span class="o">.</span><span class="n">_kill</span><span class="p">)</span> <span class="o">|</span> <span class="n">blk</span><span class="o">.</span><span class="n">_gen</span></div>
+
+
+<div class="viewcode-block" id="LivenessDataFlow.fill_liveout">
+<a class="viewcode-back" href="../../api/RegAlloc.LivenessDataFlow.html#RegAlloc.LivenessDataFlow.LivenessDataFlow.fill_liveout">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fill_liveout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Propagate the information from blockout/blockin inside the block</span>
+<span class="sd">        to get liveset instruction by instructions.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">blk</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_function</span><span class="o">.</span><span class="n">get_blocks</span><span class="p">():</span>
+            <span class="n">liveset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_blockout</span><span class="p">[</span><span class="n">blk</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">instr</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">blk</span><span class="o">.</span><span class="n">get_all_statements</span><span class="p">()):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_liveout</span><span class="p">[</span><span class="n">blk</span><span class="p">,</span> <span class="n">instr</span><span class="p">]</span> <span class="o">=</span> <span class="n">liveset</span>
+                <span class="n">liveset</span> <span class="o">=</span> <span class="p">(</span><span class="n">liveset</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">instr</span><span class="o">.</span><span class="n">defined</span><span class="p">()))</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">instr</span><span class="o">.</span><span class="n">used</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="LivenessDataFlow.print_gen_kill">
+<a class="viewcode-back" href="../../api/RegAlloc.LivenessDataFlow.html#RegAlloc.LivenessDataFlow.LivenessDataFlow.print_gen_kill">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">print_gen_kill</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Dataflow Analysis, Initialisation&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">block</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_function</span><span class="o">.</span><span class="n">get_blocks</span><span class="p">()):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;block &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">_label</span><span class="p">),</span> <span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;gen: &quot;</span> <span class="o">+</span> <span class="n">regset_to_string</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">_gen</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;kill: &quot;</span> <span class="o">+</span> <span class="n">regset_to_string</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">_kill</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LivenessDataFlow.print_map_in_out">
+<a class="viewcode-back" href="../../api/RegAlloc.LivenessDataFlow.html#RegAlloc.LivenessDataFlow.LivenessDataFlow.print_map_in_out">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">print_map_in_out</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Print in/out sets, useful for debug!&quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;In: {&quot;</span> <span class="o">+</span>
+              <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">get_label</span><span class="p">())</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span>
+                        <span class="o">+</span> <span class="n">regset_to_string</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_blockin</span><span class="p">[</span><span class="n">x</span><span class="p">])</span>
+                        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_blockin</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">+</span>
+              <span class="s2">&quot;}&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Out: {&quot;</span> <span class="o">+</span>
+              <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">get_label</span><span class="p">())</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span>
+                        <span class="o">+</span> <span class="n">regset_to_string</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_blockout</span><span class="p">[</span><span class="n">x</span><span class="p">])</span>
+                        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_blockout</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">+</span>
+              <span class="s2">&quot;}&quot;</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, compil-lyon.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

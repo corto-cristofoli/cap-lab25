@@ -1,0 +1,7 @@
+CodeGen.BuildCFG module
+=======================
+
+.. automodule:: CodeGen.BuildCFG
+   :members:
+   :show-inheritance:
+   :undoc-members:

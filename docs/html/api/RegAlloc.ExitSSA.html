@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RegAlloc.ExitSSA module &mdash; MiniC  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../_static/doctools.js?v=9bcbadda"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            MiniC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Lib.Errors.html">Base library - Errors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Lib.Statement.html">Base library - Statement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Lib.RiscV.html">Base library - RISC-V instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Lib.Operands.html">Base library - Operands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Lib.FunctionData.html">Base library - Function data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Lib.LinearCode.html">Linear intermediate representation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Lib.Allocator.html">Temporary allocation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">MiniC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">RegAlloc.ExitSSA module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/RegAlloc.ExitSSA.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-RegAlloc.ExitSSA">
+<span id="regalloc-exitssa-module"></span><h1>RegAlloc.ExitSSA module<a class="headerlink" href="#module-RegAlloc.ExitSSA" title="Link to this heading"></a></h1>
+<p>CAP, SSA Intro, Elimination and Optimisations
+Functions to convert a CFG out of SSA Form.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="RegAlloc.ExitSSA.generate_moves_from_phis_naive">
+<span class="sig-prename descclassname"><span class="pre">RegAlloc.ExitSSA.</span></span><span class="sig-name descname"><span class="pre">generate_moves_from_phis_naive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">PhiNode</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Block</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="Lib.Statement.html#Lib.Statement.Instru3A" title="Lib.Statement.Instru3A"><span class="pre">Instru3A</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="Lib.Statement.html#Lib.Statement.Comment" title="Lib.Statement.Comment"><span class="pre">Comment</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/RegAlloc/ExitSSA.html#generate_moves_from_phis_naive"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#RegAlloc.ExitSSA.generate_moves_from_phis_naive" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="RegAlloc.ExitSSA.generate_moves_from_phis">
+<span class="sig-prename descclassname"><span class="pre">RegAlloc.ExitSSA.</span></span><span class="sig-name descname"><span class="pre">generate_moves_from_phis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">PhiNode</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Block</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="Lib.Statement.html#Lib.Statement.Instru3A" title="Lib.Statement.Instru3A"><span class="pre">Instru3A</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="Lib.Statement.html#Lib.Statement.Comment" title="Lib.Statement.Comment"><span class="pre">Comment</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/RegAlloc/ExitSSA.html#generate_moves_from_phis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#RegAlloc.ExitSSA.generate_moves_from_phis" title="Link to this definition"></a></dt>
+<dd><p><cite>generate_moves_from_phis(phis, parent)</cite> builds a list of move instructions
+to be inserted in a new block between <cite>parent</cite> and the block with phi nodes
+<cite>phis</cite>.</p>
+<p>This is an helper function called during SSA exit.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="RegAlloc.ExitSSA.exit_ssa">
+<span class="sig-prename descclassname"><span class="pre">RegAlloc.ExitSSA.</span></span><span class="sig-name descname"><span class="pre">exit_ssa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CFG</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_smart</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/RegAlloc/ExitSSA.html#exit_ssa"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#RegAlloc.ExitSSA.exit_ssa" title="Link to this definition"></a></dt>
+<dd><p><cite>exit_ssa(cfg)</cite> replaces phi nodes with move instructions to exit SSA form.</p>
+<p><cite>is_smart</cite> is set to true when smart register allocation is enabled (Lab 5b).</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, compil-lyon.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

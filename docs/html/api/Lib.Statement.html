@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lib.Statement module &mdash; MiniC  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../_static/doctools.js?v=9bcbadda"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Lib.RiscV module" href="Lib.RiscV.html" />
+    <link rel="prev" title="Lib.Errors module" href="Lib.Errors.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            MiniC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Lib.Errors.html">Base library - Errors</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Base library - Statement</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Lib.Statement.regset_to_string"><code class="docutils literal notranslate"><span class="pre">regset_to_string()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Lib.Statement.Statement"><code class="docutils literal notranslate"><span class="pre">Statement</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Lib.Statement.Statement.defined"><code class="docutils literal notranslate"><span class="pre">Statement.defined()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Lib.Statement.Statement.used"><code class="docutils literal notranslate"><span class="pre">Statement.used()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Lib.Statement.Statement.substitute"><code class="docutils literal notranslate"><span class="pre">Statement.substitute()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Lib.Statement.Statement.with_args"><code class="docutils literal notranslate"><span class="pre">Statement.with_args()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Lib.Statement.Statement.printIns"><code class="docutils literal notranslate"><span class="pre">Statement.printIns()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Lib.Statement.Comment"><code class="docutils literal notranslate"><span class="pre">Comment</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Lib.Statement.Comment.comment"><code class="docutils literal notranslate"><span class="pre">Comment.comment</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Lib.Statement.Comment.printIns"><code class="docutils literal notranslate"><span class="pre">Comment.printIns()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Lib.Statement.Label"><code class="docutils literal notranslate"><span class="pre">Label</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Lib.Statement.Label.name"><code class="docutils literal notranslate"><span class="pre">Label.name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Lib.Statement.Label.printIns"><code class="docutils literal notranslate"><span class="pre">Label.printIns()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Lib.Statement.Instruction"><code class="docutils literal notranslate"><span class="pre">Instruction</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Lib.Statement.Instruction.ins"><code class="docutils literal notranslate"><span class="pre">Instruction.ins</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Lib.Statement.Instruction.is_read_only"><code class="docutils literal notranslate"><span class="pre">Instruction.is_read_only()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Lib.Statement.Instruction.rename"><code class="docutils literal notranslate"><span class="pre">Instruction.rename()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Lib.Statement.Instruction.args"><code class="docutils literal notranslate"><span class="pre">Instruction.args()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Lib.Statement.Instruction.defined"><code class="docutils literal notranslate"><span class="pre">Instruction.defined()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Lib.Statement.Instruction.used"><code class="docutils literal notranslate"><span class="pre">Instruction.used()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Lib.Statement.Instruction.printIns"><code class="docutils literal notranslate"><span class="pre">Instruction.printIns()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Lib.Statement.Instru3A"><code class="docutils literal notranslate"><span class="pre">Instru3A</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Lib.Statement.Instru3A.args"><code class="docutils literal notranslate"><span class="pre">Instru3A.args()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Lib.Statement.Instru3A.rename"><code class="docutils literal notranslate"><span class="pre">Instru3A.rename()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Lib.Statement.Instru3A.substitute"><code class="docutils literal notranslate"><span class="pre">Instru3A.substitute()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Lib.Statement.Instru3A.with_args"><code class="docutils literal notranslate"><span class="pre">Instru3A.with_args()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Lib.Statement.AbsoluteJump"><code class="docutils literal notranslate"><span class="pre">AbsoluteJump</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Lib.Statement.AbsoluteJump.ins"><code class="docutils literal notranslate"><span class="pre">AbsoluteJump.ins</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Lib.Statement.AbsoluteJump.label"><code class="docutils literal notranslate"><span class="pre">AbsoluteJump.label</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Lib.Statement.AbsoluteJump.args"><code class="docutils literal notranslate"><span class="pre">AbsoluteJump.args()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Lib.Statement.AbsoluteJump.rename"><code class="docutils literal notranslate"><span class="pre">AbsoluteJump.rename()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Lib.Statement.AbsoluteJump.substitute"><code class="docutils literal notranslate"><span class="pre">AbsoluteJump.substitute()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Lib.Statement.AbsoluteJump.with_args"><code class="docutils literal notranslate"><span class="pre">AbsoluteJump.with_args()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Lib.Statement.AbsoluteJump.targets"><code class="docutils literal notranslate"><span class="pre">AbsoluteJump.targets()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Lib.Statement.ConditionalJump"><code class="docutils literal notranslate"><span class="pre">ConditionalJump</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Lib.Statement.ConditionalJump.cond"><code class="docutils literal notranslate"><span class="pre">ConditionalJump.cond</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Lib.Statement.ConditionalJump.label"><code class="docutils literal notranslate"><span class="pre">ConditionalJump.label</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Lib.Statement.ConditionalJump.op1"><code class="docutils literal notranslate"><span class="pre">ConditionalJump.op1</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Lib.Statement.ConditionalJump.op2"><code class="docutils literal notranslate"><span class="pre">ConditionalJump.op2</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Lib.Statement.ConditionalJump.args"><code class="docutils literal notranslate"><span class="pre">ConditionalJump.args()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Lib.Statement.ConditionalJump.rename"><code class="docutils literal notranslate"><span class="pre">ConditionalJump.rename()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Lib.Statement.ConditionalJump.substitute"><code class="docutils literal notranslate"><span class="pre">ConditionalJump.substitute()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Lib.Statement.ConditionalJump.with_args"><code class="docutils literal notranslate"><span class="pre">ConditionalJump.with_args()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Lib.RiscV.html">Base library - RISC-V instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Lib.Operands.html">Base library - Operands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Lib.FunctionData.html">Base library - Function data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Lib.LinearCode.html">Linear intermediate representation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Lib.Allocator.html">Temporary allocation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">MiniC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Lib.Statement module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/Lib.Statement.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-Lib.Statement">
+<span id="lib-statement-module"></span><h1>Lib.Statement module<a class="headerlink" href="#module-Lib.Statement" title="Link to this heading"></a></h1>
+<p>The base class for RISCV ASM statements is <a class="reference internal" href="#Lib.Statement.Statement" title="Lib.Statement.Statement"><code class="xref py py-class docutils literal notranslate"><span class="pre">Statement</span></code></a>.
+It is inherited by <a class="reference internal" href="#Lib.Statement.Comment" title="Lib.Statement.Comment"><code class="xref py py-class docutils literal notranslate"><span class="pre">Comment</span></code></a>, <a class="reference internal" href="#Lib.Statement.Label" title="Lib.Statement.Label"><code class="xref py py-class docutils literal notranslate"><span class="pre">Label</span></code></a>
+and <a class="reference internal" href="#Lib.Statement.Instruction" title="Lib.Statement.Instruction"><code class="xref py py-class docutils literal notranslate"><span class="pre">Instruction</span></code></a>. In turn, <a class="reference internal" href="#Lib.Statement.Instruction" title="Lib.Statement.Instruction"><code class="xref py py-class docutils literal notranslate"><span class="pre">Instruction</span></code></a>
+is inherited by <a class="reference internal" href="#Lib.Statement.Instru3A" title="Lib.Statement.Instru3A"><code class="xref py py-class docutils literal notranslate"><span class="pre">Instru3A</span></code></a>
+(for regular non-branching 3-address instructions),
+<a class="reference internal" href="#Lib.Statement.AbsoluteJump" title="Lib.Statement.AbsoluteJump"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbsoluteJump</span></code></a> and <a class="reference internal" href="#Lib.Statement.ConditionalJump" title="Lib.Statement.ConditionalJump"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConditionalJump</span></code></a>.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="Lib.Statement.regset_to_string">
+<span class="sig-prename descclassname"><span class="pre">Lib.Statement.</span></span><span class="sig-name descname"><span class="pre">regset_to_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">registerset</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/Lib/Statement.html#regset_to_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Lib.Statement.regset_to_string" title="Link to this definition"></a></dt>
+<dd><p>Utility function: pretty-prints a set of locations.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="Lib.Statement.Statement">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Lib.Statement.</span></span><span class="sig-name descname"><span class="pre">Statement</span></span><a class="reference internal" href="../_modules/Lib/Statement.html#Statement"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Lib.Statement.Statement" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A Statement, which is an instruction, a comment or a label.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="Lib.Statement.Statement.defined">
+<span class="sig-name descname"><span class="pre">defined</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Operand" title="Lib.Operands.Operand"><span class="pre">Operand</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/Lib/Statement.html#Statement.defined"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Lib.Statement.Statement.defined" title="Link to this definition"></a></dt>
+<dd><p>Operands defined (written) in this instruction</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Lib.Statement.Statement.used">
+<span class="sig-name descname"><span class="pre">used</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Operand" title="Lib.Operands.Operand"><span class="pre">Operand</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/Lib/Statement.html#Statement.used"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Lib.Statement.Statement.used" title="Link to this definition"></a></dt>
+<dd><p>Operands used (read) in this instruction</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Lib.Statement.Statement.substitute">
+<span class="sig-name descname"><span class="pre">substitute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subst</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Operand" title="Lib.Operands.Operand"><span class="pre">Operand</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Operand" title="Lib.Operands.Operand"><span class="pre">Operand</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">TStatement</span></span></span><a class="reference internal" href="../_modules/Lib/Statement.html#Statement.substitute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Lib.Statement.Statement.substitute" title="Link to this definition"></a></dt>
+<dd><p>Return a new instruction, cloned from this one, replacing operands
+that appear as key in subst by their value.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Lib.Statement.Statement.with_args">
+<span class="sig-name descname"><span class="pre">with_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Operand" title="Lib.Operands.Operand"><span class="pre">Operand</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">TStatement</span></span></span><a class="reference internal" href="../_modules/Lib/Statement.html#Statement.with_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Lib.Statement.Statement.with_args" title="Link to this definition"></a></dt>
+<dd><p>Return a new instruction, cloned from this one, where operands have
+been replaced by new_args.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Lib.Statement.Statement.printIns">
+<span class="sig-name descname"><span class="pre">printIns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Lib/Statement.html#Statement.printIns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Lib.Statement.Statement.printIns" title="Link to this definition"></a></dt>
+<dd><p>Print the statement on the given output.
+Should never be called on the base class.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="Lib.Statement.Comment">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Lib.Statement.</span></span><span class="sig-name descname"><span class="pre">Comment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">comment</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Lib/Statement.html#Comment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Lib.Statement.Comment" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#Lib.Statement.Statement" title="Lib.Statement.Statement"><code class="xref py py-class docutils literal notranslate"><span class="pre">Statement</span></code></a></p>
+<p>A comment.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Lib.Statement.Comment.comment">
+<span class="sig-name descname"><span class="pre">comment</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#Lib.Statement.Comment.comment" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Lib.Statement.Comment.printIns">
+<span class="sig-name descname"><span class="pre">printIns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Lib/Statement.html#Comment.printIns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Lib.Statement.Comment.printIns" title="Link to this definition"></a></dt>
+<dd><p>Print the statement on the given output.
+Should never be called on the base class.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="Lib.Statement.Label">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Lib.Statement.</span></span><span class="sig-name descname"><span class="pre">Label</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Lib/Statement.html#Label"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Lib.Statement.Label" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#Lib.Statement.Statement" title="Lib.Statement.Statement"><code class="xref py py-class docutils literal notranslate"><span class="pre">Statement</span></code></a>, <a class="reference internal" href="Lib.Operands.html#Lib.Operands.Operand" title="Lib.Operands.Operand"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operand</span></code></a></p>
+<p>A label is both a Statement and an Operand.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Lib.Statement.Label.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#Lib.Statement.Label.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Lib.Statement.Label.printIns">
+<span class="sig-name descname"><span class="pre">printIns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Lib/Statement.html#Label.printIns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Lib.Statement.Label.printIns" title="Link to this definition"></a></dt>
+<dd><p>Print the statement on the given output.
+Should never be called on the base class.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="Lib.Statement.Instruction">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Lib.Statement.</span></span><span class="sig-name descname"><span class="pre">Instruction</span></span><a class="reference internal" href="../_modules/Lib/Statement.html#Instruction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Lib.Statement.Instruction" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#Lib.Statement.Statement" title="Lib.Statement.Statement"><code class="xref py py-class docutils literal notranslate"><span class="pre">Statement</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Lib.Statement.Instruction.ins">
+<span class="sig-name descname"><span class="pre">ins</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#Lib.Statement.Instruction.ins" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Lib.Statement.Instruction.is_read_only">
+<span class="sig-name descname"><span class="pre">is_read_only</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Lib/Statement.html#Instruction.is_read_only"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Lib.Statement.Instruction.is_read_only" title="Link to this definition"></a></dt>
+<dd><p>True if the instruction only reads from its operands.</p>
+<p>Otherwise, the first operand is considered as the destination
+and others are source.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Lib.Statement.Instruction.rename">
+<span class="sig-name descname"><span class="pre">rename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">renamer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Renamer" title="Lib.Operands.Renamer"><span class="pre">Renamer</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/Lib/Statement.html#Instruction.rename"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Lib.Statement.Instruction.rename" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Lib.Statement.Instruction.args">
+<span class="sig-name descname"><span class="pre">args</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Operand" title="Lib.Operands.Operand"><span class="pre">Operand</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/Lib/Statement.html#Instruction.args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Lib.Statement.Instruction.args" title="Link to this definition"></a></dt>
+<dd><p>List of operands the instruction takes</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Lib.Statement.Instruction.defined">
+<span class="sig-name descname"><span class="pre">defined</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Lib/Statement.html#Instruction.defined"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Lib.Statement.Instruction.defined" title="Link to this definition"></a></dt>
+<dd><p>Operands defined (written) in this instruction</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Lib.Statement.Instruction.used">
+<span class="sig-name descname"><span class="pre">used</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Operand" title="Lib.Operands.Operand"><span class="pre">Operand</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/Lib/Statement.html#Instruction.used"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Lib.Statement.Instruction.used" title="Link to this definition"></a></dt>
+<dd><p>Operands used (read) in this instruction</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Lib.Statement.Instruction.printIns">
+<span class="sig-name descname"><span class="pre">printIns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Lib/Statement.html#Instruction.printIns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Lib.Statement.Instruction.printIns" title="Link to this definition"></a></dt>
+<dd><p>Print the instruction on the given output.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="Lib.Statement.Instru3A">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Lib.Statement.</span></span><span class="sig-name descname"><span class="pre">Instru3A</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ins</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Operand" title="Lib.Operands.Operand"><span class="pre">Lib.Operands.Operand</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Lib/Statement.html#Instru3A"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Lib.Statement.Instru3A" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#Lib.Statement.Instruction" title="Lib.Statement.Instruction"><code class="xref py py-class docutils literal notranslate"><span class="pre">Instruction</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="Lib.Statement.Instru3A.args">
+<span class="sig-name descname"><span class="pre">args</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Lib/Statement.html#Instru3A.args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Lib.Statement.Instru3A.args" title="Link to this definition"></a></dt>
+<dd><p>List of operands the instruction takes</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Lib.Statement.Instru3A.rename">
+<span class="sig-name descname"><span class="pre">rename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">renamer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Renamer" title="Lib.Operands.Renamer"><span class="pre">Renamer</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Lib/Statement.html#Instru3A.rename"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Lib.Statement.Instru3A.rename" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Lib.Statement.Instru3A.substitute">
+<span class="sig-name descname"><span class="pre">substitute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subst</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Operand" title="Lib.Operands.Operand"><span class="pre">Operand</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Operand" title="Lib.Operands.Operand"><span class="pre">Operand</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Lib/Statement.html#Instru3A.substitute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Lib.Statement.Instru3A.substitute" title="Link to this definition"></a></dt>
+<dd><p>Return a new instruction, cloned from this one, replacing operands
+that appear as key in subst by their value.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Lib.Statement.Instru3A.with_args">
+<span class="sig-name descname"><span class="pre">with_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Operand" title="Lib.Operands.Operand"><span class="pre">Operand</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Lib/Statement.html#Instru3A.with_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Lib.Statement.Instru3A.with_args" title="Link to this definition"></a></dt>
+<dd><p>Return a new instruction, cloned from this one, where operands have
+been replaced by new_args.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="Lib.Statement.AbsoluteJump">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Lib.Statement.</span></span><span class="sig-name descname"><span class="pre">AbsoluteJump</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#Lib.Statement.Label" title="Lib.Statement.Label"><span class="pre">Label</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Lib/Statement.html#AbsoluteJump"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Lib.Statement.AbsoluteJump" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#Lib.Statement.Instruction" title="Lib.Statement.Instruction"><code class="xref py py-class docutils literal notranslate"><span class="pre">Instruction</span></code></a></p>
+<p>An Absolute Jump is a specific kind of instruction</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Lib.Statement.AbsoluteJump.ins">
+<span class="sig-name descname"><span class="pre">ins</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'j'</span></em><a class="headerlink" href="#Lib.Statement.AbsoluteJump.ins" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Lib.Statement.AbsoluteJump.label">
+<span class="sig-name descname"><span class="pre">label</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#Lib.Statement.Label" title="Lib.Statement.Label"><span class="pre">Label</span></a></em><a class="headerlink" href="#Lib.Statement.AbsoluteJump.label" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Lib.Statement.AbsoluteJump.args">
+<span class="sig-name descname"><span class="pre">args</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Operand" title="Lib.Operands.Operand"><span class="pre">Operand</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/Lib/Statement.html#AbsoluteJump.args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Lib.Statement.AbsoluteJump.args" title="Link to this definition"></a></dt>
+<dd><p>List of operands the instruction takes</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Lib.Statement.AbsoluteJump.rename">
+<span class="sig-name descname"><span class="pre">rename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">renamer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Renamer" title="Lib.Operands.Renamer"><span class="pre">Renamer</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Lib/Statement.html#AbsoluteJump.rename"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Lib.Statement.AbsoluteJump.rename" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Lib.Statement.AbsoluteJump.substitute">
+<span class="sig-name descname"><span class="pre">substitute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subst</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Operand" title="Lib.Operands.Operand"><span class="pre">Operand</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Operand" title="Lib.Operands.Operand"><span class="pre">Operand</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Lib/Statement.html#AbsoluteJump.substitute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Lib.Statement.AbsoluteJump.substitute" title="Link to this definition"></a></dt>
+<dd><p>Return a new instruction, cloned from this one, replacing operands
+that appear as key in subst by their value.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Lib.Statement.AbsoluteJump.with_args">
+<span class="sig-name descname"><span class="pre">with_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Operand" title="Lib.Operands.Operand"><span class="pre">Operand</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Lib/Statement.html#AbsoluteJump.with_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Lib.Statement.AbsoluteJump.with_args" title="Link to this definition"></a></dt>
+<dd><p>Return a new instruction, cloned from this one, where operands have
+been replaced by new_args.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Lib.Statement.AbsoluteJump.targets">
+<span class="sig-name descname"><span class="pre">targets</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#Lib.Statement.Label" title="Lib.Statement.Label"><span class="pre">Label</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/Lib/Statement.html#AbsoluteJump.targets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Lib.Statement.AbsoluteJump.targets" title="Link to this definition"></a></dt>
+<dd><p>Return the labels targetted by the AbsoluteJump.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="Lib.Statement.ConditionalJump">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Lib.Statement.</span></span><span class="sig-name descname"><span class="pre">ConditionalJump</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cond</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Condition" title="Lib.Operands.Condition"><span class="pre">Condition</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">op1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="Lib.Operands.html#Lib.Operands.RegisterLike" title="Lib.Operands.RegisterLike"><span class="pre">RegisterLike</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">op2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="Lib.Operands.html#Lib.Operands.RegisterLike" title="Lib.Operands.RegisterLike"><span class="pre">RegisterLike</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#Lib.Statement.Label" title="Lib.Statement.Label"><span class="pre">Label</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Lib/Statement.html#ConditionalJump"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Lib.Statement.ConditionalJump" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#Lib.Statement.Instruction" title="Lib.Statement.Instruction"><code class="xref py py-class docutils literal notranslate"><span class="pre">Instruction</span></code></a></p>
+<p>A Conditional Jump is a specific kind of instruction</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Lib.Statement.ConditionalJump.cond">
+<span class="sig-name descname"><span class="pre">cond</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Condition" title="Lib.Operands.Condition"><span class="pre">Condition</span></a></em><a class="headerlink" href="#Lib.Statement.ConditionalJump.cond" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Lib.Statement.ConditionalJump.label">
+<span class="sig-name descname"><span class="pre">label</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#Lib.Statement.Label" title="Lib.Statement.Label"><span class="pre">Label</span></a></em><a class="headerlink" href="#Lib.Statement.ConditionalJump.label" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Lib.Statement.ConditionalJump.op1">
+<span class="sig-name descname"><span class="pre">op1</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="Lib.Operands.html#Lib.Operands.RegisterLike" title="Lib.Operands.RegisterLike"><span class="pre">RegisterLike</span></a></em><a class="headerlink" href="#Lib.Statement.ConditionalJump.op1" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Lib.Statement.ConditionalJump.op2">
+<span class="sig-name descname"><span class="pre">op2</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="Lib.Operands.html#Lib.Operands.RegisterLike" title="Lib.Operands.RegisterLike"><span class="pre">RegisterLike</span></a></em><a class="headerlink" href="#Lib.Statement.ConditionalJump.op2" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Lib.Statement.ConditionalJump.args">
+<span class="sig-name descname"><span class="pre">args</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Lib/Statement.html#ConditionalJump.args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Lib.Statement.ConditionalJump.args" title="Link to this definition"></a></dt>
+<dd><p>List of operands the instruction takes</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Lib.Statement.ConditionalJump.rename">
+<span class="sig-name descname"><span class="pre">rename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">renamer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Renamer" title="Lib.Operands.Renamer"><span class="pre">Renamer</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Lib/Statement.html#ConditionalJump.rename"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Lib.Statement.ConditionalJump.rename" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Lib.Statement.ConditionalJump.substitute">
+<span class="sig-name descname"><span class="pre">substitute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subst</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Operand" title="Lib.Operands.Operand"><span class="pre">Operand</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Operand" title="Lib.Operands.Operand"><span class="pre">Operand</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Lib/Statement.html#ConditionalJump.substitute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Lib.Statement.ConditionalJump.substitute" title="Link to this definition"></a></dt>
+<dd><p>Return a new instruction, cloned from this one, replacing operands
+that appear as key in subst by their value.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Lib.Statement.ConditionalJump.with_args">
+<span class="sig-name descname"><span class="pre">with_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Operand" title="Lib.Operands.Operand"><span class="pre">Operand</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Lib/Statement.html#ConditionalJump.with_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Lib.Statement.ConditionalJump.with_args" title="Link to this definition"></a></dt>
+<dd><p>Return a new instruction, cloned from this one, where operands have
+been replaced by new_args.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Lib.Errors.html" class="btn btn-neutral float-left" title="Lib.Errors module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Lib.RiscV.html" class="btn btn-neutral float-right" title="Lib.RiscV module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, compil-lyon.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RegAlloc.LivenessSSA &mdash; MiniC  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../_static/doctools.js?v=9bcbadda"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            MiniC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/Lib.Errors.html">Base library - Errors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/Lib.Statement.html">Base library - Statement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/Lib.RiscV.html">Base library - RISC-V instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/Lib.Operands.html">Base library - Operands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/Lib.FunctionData.html">Base library - Function data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/Lib.LinearCode.html">Linear intermediate representation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/Lib.Allocator.html">Temporary allocation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">MiniC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">RegAlloc.LivenessSSA</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for RegAlloc.LivenessSSA</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Lib.Operands</span><span class="w"> </span><span class="kn">import</span> <span class="n">Temporary</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Lib.Statement</span><span class="w"> </span><span class="kn">import</span> <span class="n">Statement</span><span class="p">,</span> <span class="n">regset_to_string</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Lib.CFG</span><span class="w"> </span><span class="kn">import</span> <span class="n">Block</span><span class="p">,</span> <span class="n">CFG</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Lib.PhiNode</span><span class="w"> </span><span class="kn">import</span> <span class="n">PhiNode</span>
+
+
+<div class="viewcode-block" id="LivenessSSA">
+<a class="viewcode-back" href="../../api/RegAlloc.LivenessSSA.html#RegAlloc.LivenessSSA.LivenessSSA">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">LivenessSSA</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Liveness Analysis on a CFG under SSA Form.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cfg</span><span class="p">:</span> <span class="n">CFG</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cfg</span><span class="p">:</span> <span class="n">CFG</span> <span class="o">=</span> <span class="n">cfg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_debug</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">debug</span>
+        <span class="c1"># Temporary already propagated, by Block</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_seen</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Block</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="n">Temporary</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="c1"># Live Temporary at outputs of Statement</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_liveout</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">Block</span><span class="p">,</span> <span class="n">Statement</span><span class="p">],</span> <span class="n">Set</span><span class="p">[</span><span class="n">Temporary</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+<div class="viewcode-block" id="LivenessSSA.run">
+<a class="viewcode-back" href="../../api/RegAlloc.LivenessSSA.html#RegAlloc.LivenessSSA.LivenessSSA.run">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the liveness: fill out self._seen and self._liveout.&quot;&quot;&quot;</span>
+        <span class="c1"># Initialization</span>
+        <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cfg</span><span class="o">.</span><span class="n">get_blocks</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_seen</span><span class="p">[</span><span class="n">block</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">instr</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="n">get_all_statements</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_liveout</span><span class="p">[</span><span class="n">block</span><span class="p">,</span> <span class="n">instr</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="c1"># Start the used-defined chains with backward propagation of liveness information</span>
+        <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">uses</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gather_uses</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">block</span><span class="p">,</span> <span class="n">pos</span> <span class="ow">in</span> <span class="n">uses</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">livein_at_instruction</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">var</span><span class="p">)</span>
+        <span class="c1"># Add conflicts on phis</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conflict_on_phis</span><span class="p">()</span>
+        <span class="c1"># Final debugging print</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_debug</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">print_map_in_out</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="LivenessSSA.livein_at_instruction">
+<a class="viewcode-back" href="../../api/RegAlloc.LivenessSSA.html#RegAlloc.LivenessSSA.LivenessSSA.livein_at_instruction">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">livein_at_instruction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span> <span class="n">pos</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">var</span><span class="p">:</span> <span class="n">Temporary</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Backward propagation of liveness information at the beginning of an instruction.&quot;&quot;&quot;</span>
+        <span class="c1"># BEGIN CUT</span>
+        <span class="n">instr</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">get_all_statements</span><span class="p">()[</span><span class="n">pos</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instr</span><span class="p">,</span> <span class="n">PhiNode</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">var</span> <span class="ow">in</span> <span class="n">instr</span><span class="o">.</span><span class="n">get_srcs</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+            <span class="n">lbl</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">instr</span><span class="o">.</span><span class="n">get_srcs</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="nb">list</span><span class="p">(</span><span class="n">instr</span><span class="o">.</span><span class="n">get_srcs</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">())</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">var</span><span class="p">)]</span>
+            <span class="k">for</span> <span class="n">prev_block</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="n">get_in</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">prev_block</span><span class="o">.</span><span class="n">get_label</span><span class="p">()</span> <span class="o">==</span> <span class="n">lbl</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">liveout_at_block</span><span class="p">(</span><span class="n">prev_block</span><span class="p">,</span> <span class="n">var</span><span class="p">)</span>
+                    <span class="k">break</span>
+        <span class="k">elif</span> <span class="n">pos</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># If reach the beginning of the block, go to previous blocks.</span>
+            <span class="k">for</span> <span class="n">prev_block</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="n">get_in</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">liveout_at_block</span><span class="p">(</span><span class="n">prev_block</span><span class="p">,</span> <span class="n">var</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Otherwise, go to the previous instruction.</span>
+            <span class="n">prev_pos</span> <span class="o">=</span> <span class="n">pos</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">liveout_at_instruction</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">prev_pos</span><span class="p">,</span> <span class="n">var</span><span class="p">)</span></div>
+
+        <span class="c1"># END CUT</span>
+        <span class="c1"># UNCOMMENT raise NotImplementedError(&quot;LivenessSSA&quot;) # TODO (Lab 5b, Exercise 1)</span>
+
+<div class="viewcode-block" id="LivenessSSA.liveout_at_instruction">
+<a class="viewcode-back" href="../../api/RegAlloc.LivenessSSA.html#RegAlloc.LivenessSSA.LivenessSSA.liveout_at_instruction">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">liveout_at_instruction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span> <span class="n">pos</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">var</span><span class="p">:</span> <span class="n">Temporary</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Backward propagation of liveness information at the end of an instruction.&quot;&quot;&quot;</span>
+        <span class="n">instr</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">get_all_statements</span><span class="p">()[</span><span class="n">pos</span><span class="p">]</span>
+        <span class="c1"># BEGIN CUT</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_liveout</span><span class="p">[</span><span class="n">block</span><span class="p">,</span> <span class="n">instr</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">var</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">instr</span><span class="o">.</span><span class="n">defined</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">livein_at_instruction</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">var</span><span class="p">)</span></div>
+
+        <span class="c1"># END CUT</span>
+        <span class="c1"># UNCOMMENT raise NotImplementedError(&quot;LivenessSSA&quot;) # TODO (Lab 5b, Exercise 1)</span>
+
+<div class="viewcode-block" id="LivenessSSA.liveout_at_block">
+<a class="viewcode-back" href="../../api/RegAlloc.LivenessSSA.html#RegAlloc.LivenessSSA.LivenessSSA.liveout_at_block">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">liveout_at_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span> <span class="n">var</span><span class="p">:</span> <span class="n">Temporary</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Backward propagation of liveness information at the end of a block.&quot;&quot;&quot;</span>
+        <span class="c1"># BEGIN CUT</span>
+        <span class="k">if</span> <span class="n">var</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_seen</span><span class="p">[</span><span class="n">block</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_seen</span><span class="p">[</span><span class="n">block</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+            <span class="c1"># There is at least one instruction per block: its terminator</span>
+            <span class="n">last_pos</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">get_all_statements</span><span class="p">())</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">liveout_at_instruction</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">last_pos</span><span class="p">,</span> <span class="n">var</span><span class="p">)</span></div>
+
+        <span class="c1"># END CUT</span>
+        <span class="c1"># UNCOMMENT raise NotImplementedError(&quot;LivenessSSA&quot;) # TODO (Lab 5b, Exercise 1)</span>
+
+<div class="viewcode-block" id="LivenessSSA.gather_uses">
+<a class="viewcode-back" href="../../api/RegAlloc.LivenessSSA.html#RegAlloc.LivenessSSA.LivenessSSA.gather_uses">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">gather_uses</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Temporary</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Block</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a dictionnary giving for each variable the set of statements using it,</span>
+<span class="sd">        with a statement identified by its block and its position inside the latter.</span>
+<span class="sd">        Phi instructions are at the beginning of their block, while a Terminator is at</span>
+<span class="sd">        the last position of its block.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">uses</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Temporary</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Block</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cfg</span><span class="o">.</span><span class="n">get_blocks</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">pos</span><span class="p">,</span> <span class="n">instr</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">get_all_statements</span><span class="p">()):</span>
+                <span class="c1"># Variables used by a statement `s` are `s.used()`</span>
+                <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">instr</span><span class="o">.</span><span class="n">used</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">Temporary</span><span class="p">):</span>
+                        <span class="c1"># Already computed uses of the var if any, otherwise the empty set</span>
+                        <span class="n">var_uses</span> <span class="o">=</span> <span class="n">uses</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span>
+                        <span class="c1"># Add for a statement its block and its position inside to the uses of var</span>
+                        <span class="n">uses</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">var_uses</span><span class="o">.</span><span class="n">union</span><span class="p">({(</span><span class="n">block</span><span class="p">,</span> <span class="n">pos</span><span class="p">)})</span>
+        <span class="k">return</span> <span class="n">uses</span></div>
+
+
+<div class="viewcode-block" id="LivenessSSA.conflict_on_phis">
+<a class="viewcode-back" href="../../api/RegAlloc.LivenessSSA.html#RegAlloc.LivenessSSA.LivenessSSA.conflict_on_phis">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">conflict_on_phis</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Ensures that variables defined by φ instructions are in conflict with one-another.&quot;&quot;&quot;</span>
+        <span class="c1"># BEGIN CUT</span>
+        <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cfg</span><span class="o">.</span><span class="n">get_blocks</span><span class="p">():</span>
+            <span class="n">previous_vars</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">phi</span> <span class="ow">in</span> <span class="n">b</span><span class="o">.</span><span class="n">get_phis</span><span class="p">():</span>
+                <span class="n">previous_vars</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">phi</span><span class="o">.</span><span class="n">defined</span><span class="p">())</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_liveout</span><span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="n">phi</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">previous_vars</span><span class="p">)</span></div>
+
+        <span class="c1"># END CUT</span>
+        <span class="c1"># UNCOMMENT raise NotImplementedError(&quot;LivenessSSA&quot;) # TODO (Lab 5b, Exercise 1)</span>
+
+<div class="viewcode-block" id="LivenessSSA.print_map_in_out">
+<a class="viewcode-back" href="../../api/RegAlloc.LivenessSSA.html#RegAlloc.LivenessSSA.LivenessSSA.print_map_in_out">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">print_map_in_out</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Print live out sets at each instruction, group by block, useful for debugging!&quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Liveout: [&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cfg</span><span class="o">.</span><span class="n">get_blocks</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Block &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">get_label</span><span class="p">())</span> <span class="o">+</span> <span class="s2">&quot;: {</span><span class="se">\n</span><span class="s2"> &quot;</span>
+                  <span class="o">+</span> <span class="s2">&quot;,</span><span class="se">\n</span><span class="s2"> &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\&quot;</span><span class="si">{</span><span class="n">instr</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">: </span><span class="si">{</span><span class="n">regset_to_string</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_liveout</span><span class="p">[</span><span class="n">block</span><span class="p">,</span><span class="w"> </span><span class="n">instr</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span>
+                  <span class="k">for</span> <span class="n">instr</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="n">get_all_statements</span><span class="p">())</span> <span class="o">+</span>
+                  <span class="s2">&quot;}&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;]&quot;</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, compil-lyon.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,7 @@
+RegAlloc.SequentializeMoves module
+==================================
+
+.. automodule:: RegAlloc.SequentializeMoves
+   :members:
+   :show-inheritance:
+   :undoc-members:

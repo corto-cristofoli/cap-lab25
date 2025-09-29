@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CodeGen.MiniCCodeGen3AVisitor &mdash; MiniC  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../_static/doctools.js?v=9bcbadda"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            MiniC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/Lib.Errors.html">Base library - Errors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/Lib.Statement.html">Base library - Statement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/Lib.RiscV.html">Base library - RISC-V instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/Lib.Operands.html">Base library - Operands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/Lib.FunctionData.html">Base library - Function data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/Lib.LinearCode.html">Linear intermediate representation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/Lib.Allocator.html">Temporary allocation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">MiniC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">CodeGen.MiniCCodeGen3AVisitor</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for CodeGen.MiniCCodeGen3AVisitor</h1><div class="highlight"><pre>
+<span></span><span class="c1"># BEGIN CUT (functions)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="c1"># END CUT (functions)</span>
+<span class="c1"># UNCOMMENT (functions) from typing import Callable, List</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">MiniCVisitor</span><span class="w"> </span><span class="kn">import</span> <span class="n">MiniCVisitor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">MiniCParser</span><span class="w"> </span><span class="kn">import</span> <span class="n">MiniCParser</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Lib.LinearCode</span><span class="w"> </span><span class="kn">import</span> <span class="n">CodeStatement</span><span class="p">,</span> <span class="n">LinearCode</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Lib</span><span class="w"> </span><span class="kn">import</span> <span class="n">RiscV</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Lib.RiscV</span><span class="w"> </span><span class="kn">import</span> <span class="n">Condition</span>
+<span class="c1"># BEGIN CUT (extension)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Lib.RiscV</span><span class="w"> </span><span class="kn">import</span> <span class="n">Label</span>
+<span class="c1"># END CUT (extension)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Lib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Operands</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">antlr4.tree.Trees</span><span class="w"> </span><span class="kn">import</span> <span class="n">Trees</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Lib.Errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">MiniCInternalError</span><span class="p">,</span> <span class="n">MiniCUnsupportedError</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">CAP, MIF08, three-address code generation + simple alloc</span>
+<span class="sd">This visitor constructs an object of type &quot;LinearCode&quot;.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MiniCCodeGen3AVisitor</span><span class="p">(</span><span class="n">MiniCVisitor</span><span class="p">):</span>
+
+    <span class="n">_current_function</span><span class="p">:</span> <span class="n">LinearCode</span>
+    <span class="c1"># Shortcuts for methods of member objects</span>
+    <span class="n">fresh_tmp</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">Operands</span><span class="o">.</span><span class="n">Temporary</span><span class="p">]</span>
+    <span class="n">fresh_label</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">RiscV</span><span class="o">.</span><span class="n">Label</span><span class="p">]</span>
+    <span class="n">add_statement</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">CodeStatement</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span>
+    <span class="n">add_instruction_PRINTLN_INT</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Operands</span><span class="o">.</span><span class="n">DataLocation</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span>
+    <span class="n">add_comment</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span>
+    <span class="n">get_label_div_by_zero</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">RiscV</span><span class="o">.</span><span class="n">Label</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">debug</span><span class="p">,</span> <span class="n">parser</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parser</span> <span class="o">=</span> <span class="n">parser</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_debug</span> <span class="o">=</span> <span class="n">debug</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_functions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lastlabel</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.get_functions">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.get_functions">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_functions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">LinearCode</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_functions</span></div>
+
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.printSymbolTable">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.printSymbolTable">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">printSymbolTable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;--variables to temporaries map--&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">keys</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_symbol_table</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">keys</span> <span class="o">+</span> <span class="s1">&#39;--&gt;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">values</span><span class="p">))</span></div>
+
+
+    <span class="c1"># handle variable decl</span>
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.visitVarDecl">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitVarDecl">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visitVarDecl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">type_str</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">typee</span><span class="p">()</span><span class="o">.</span><span class="n">getText</span><span class="p">()</span>
+        <span class="n">vars_l</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">id_l</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">vars_l</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_symbol_table</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">MiniCInternalError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Variable </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> has already been declared&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">tmp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fresh_tmp</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_symbol_table</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span>
+                <span class="k">if</span> <span class="n">type_str</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;int&quot;</span><span class="p">,</span> <span class="s2">&quot;bool&quot;</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="n">MiniCUnsupportedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported type </span><span class="si">{</span><span class="n">type_str</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="c1"># Initialization to 0 or False, both represented with 0</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span>
+                    <span class="n">RiscV</span><span class="o">.</span><span class="n">li</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="n">Operands</span><span class="o">.</span><span class="n">Immediate</span><span class="p">(</span><span class="mi">0</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.visitIdList">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitIdList">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visitIdList</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">id_l</span><span class="p">())</span>
+        <span class="n">t</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">ID</span><span class="p">()</span><span class="o">.</span><span class="n">getText</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">t</span></div>
+
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.visitIdListBase">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitIdListBase">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visitIdListBase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">ctx</span><span class="o">.</span><span class="n">ID</span><span class="p">()</span><span class="o">.</span><span class="n">getText</span><span class="p">()]</span></div>
+
+
+    <span class="c1"># expressions</span>
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.visitParExpr">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitParExpr">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visitParExpr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operands</span><span class="o">.</span><span class="n">Temporary</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">expr</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.visitIntAtom">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitIntAtom">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visitIntAtom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operands</span><span class="o">.</span><span class="n">Temporary</span><span class="p">:</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="n">Operands</span><span class="o">.</span><span class="n">Immediate</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">getText</span><span class="p">()))</span>
+        <span class="n">dest_temp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fresh_tmp</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span><span class="n">RiscV</span><span class="o">.</span><span class="n">li</span><span class="p">(</span><span class="n">dest_temp</span><span class="p">,</span> <span class="n">val</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">dest_temp</span></div>
+
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.visitFloatAtom">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitFloatAtom">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visitFloatAtom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operands</span><span class="o">.</span><span class="n">Temporary</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">MiniCUnsupportedError</span><span class="p">(</span><span class="s2">&quot;float literal&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.visitBooleanAtom">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitBooleanAtom">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visitBooleanAtom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operands</span><span class="o">.</span><span class="n">Temporary</span><span class="p">:</span>
+        <span class="c1"># true is 1 false is 0</span>
+        <span class="c1"># BEGIN CUT (codegen)</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">getText</span><span class="p">()</span>
+        <span class="n">dest_temp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fresh_tmp</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">b</span> <span class="o">==</span> <span class="s1">&#39;true&#39;</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span>
+            <span class="n">RiscV</span><span class="o">.</span><span class="n">li</span><span class="p">(</span><span class="n">dest_temp</span><span class="p">,</span> <span class="n">Operands</span><span class="o">.</span><span class="n">Immediate</span><span class="p">(</span><span class="n">val</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">dest_temp</span></div>
+
+        <span class="c1"># END CUT</span>
+        <span class="c1"># UNCOMMENT (codegen) raise NotImplementedError()  # TODO</span>
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.visitIdAtom">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitIdAtom">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visitIdAtom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operands</span><span class="o">.</span><span class="n">Temporary</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># get the temporary associated to id</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_symbol_table</span><span class="p">[</span><span class="n">ctx</span><span class="o">.</span><span class="n">getText</span><span class="p">()]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+            <span class="k">raise</span> <span class="n">MiniCInternalError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Undefined variable </span><span class="si">{</span><span class="n">ctx</span><span class="o">.</span><span class="n">getText</span><span class="p">()</span><span class="si">}</span><span class="s2">, this should have failed to typecheck.&quot;</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.visitStringAtom">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitStringAtom">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visitStringAtom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operands</span><span class="o">.</span><span class="n">Temporary</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">MiniCUnsupportedError</span><span class="p">(</span><span class="s2">&quot;string atom&quot;</span><span class="p">)</span></div>
+
+
+    <span class="c1"># now visit expressions</span>
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.visitAtomExpr">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitAtomExpr">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visitAtomExpr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operands</span><span class="o">.</span><span class="n">Temporary</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">atom</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.visitAdditiveExpr">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitAdditiveExpr">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visitAdditiveExpr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operands</span><span class="o">.</span><span class="n">Temporary</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">ctx</span><span class="o">.</span><span class="n">myop</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="n">tmpl</span><span class="p">:</span> <span class="n">Operands</span><span class="o">.</span><span class="n">Temporary</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">expr</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+        <span class="n">tmpr</span><span class="p">:</span> <span class="n">Operands</span><span class="o">.</span><span class="n">Temporary</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">expr</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+        <span class="c1"># BEGIN CUT(codegen)</span>
+        <span class="n">dest_temp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fresh_tmp</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">ctx</span><span class="o">.</span><span class="n">myop</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">MiniCParser</span><span class="o">.</span><span class="n">PLUS</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span><span class="n">RiscV</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">dest_temp</span><span class="p">,</span> <span class="n">tmpl</span><span class="p">,</span> <span class="n">tmpr</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span><span class="n">RiscV</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">dest_temp</span><span class="p">,</span> <span class="n">tmpl</span><span class="p">,</span> <span class="n">tmpr</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">dest_temp</span></div>
+
+        <span class="c1"># END CUT</span>
+        <span class="c1"># UNCOMMENT(codegen) raise NotImplementedError()  # TODO</span>
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.visitOrExpr">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitOrExpr">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visitOrExpr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operands</span><span class="o">.</span><span class="n">Temporary</span><span class="p">:</span>
+        <span class="c1"># BEGIN CUT (codegen)</span>
+        <span class="n">tmpl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">expr</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+        <span class="n">tmpr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">expr</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">dest_temp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fresh_tmp</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span><span class="n">RiscV</span><span class="o">.</span><span class="n">lor</span><span class="p">(</span><span class="n">dest_temp</span><span class="p">,</span> <span class="n">tmpl</span><span class="p">,</span> <span class="n">tmpr</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">dest_temp</span></div>
+
+        <span class="c1"># END CUT</span>
+        <span class="c1"># UNCOMMENT(codegen) raise NotImplementedError()  # TODO</span>
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.visitAndExpr">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitAndExpr">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visitAndExpr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operands</span><span class="o">.</span><span class="n">Temporary</span><span class="p">:</span>
+        <span class="c1"># BEGIN CUT (codegen)</span>
+        <span class="n">tmpl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">expr</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+        <span class="n">tmpr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">expr</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">dest_temp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fresh_tmp</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span><span class="n">RiscV</span><span class="o">.</span><span class="n">land</span><span class="p">(</span><span class="n">dest_temp</span><span class="p">,</span> <span class="n">tmpl</span><span class="p">,</span> <span class="n">tmpr</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">dest_temp</span></div>
+
+        <span class="c1"># END CUT</span>
+        <span class="c1"># UNCOMMENT(codegen) raise NotImplementedError()  # TODO</span>
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.visitEqualityExpr">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitEqualityExpr">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visitEqualityExpr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operands</span><span class="o">.</span><span class="n">Temporary</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">visitRelationalExpr</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.visitRelationalExpr">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitRelationalExpr">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visitRelationalExpr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operands</span><span class="o">.</span><span class="n">Temporary</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">ctx</span><span class="o">.</span><span class="n">myop</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">Condition</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">myop</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_debug</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;relational expression:&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">Trees</span><span class="o">.</span><span class="n">toStringTree</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="p">[],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parser</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Condition:&quot;</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+        <span class="c1"># BEGIN CUT (codegen)</span>
+        <span class="n">tmpl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">expr</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+        <span class="n">tmpr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">expr</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">dest</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fresh_tmp</span><span class="p">()</span>
+        <span class="n">end_relational</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fresh_label</span><span class="p">(</span><span class="s1">&#39;end_relational&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span>
+            <span class="n">RiscV</span><span class="o">.</span><span class="n">li</span><span class="p">(</span><span class="n">dest</span><span class="p">,</span> <span class="n">Operands</span><span class="o">.</span><span class="n">Immediate</span><span class="p">(</span><span class="mi">0</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span>
+            <span class="n">RiscV</span><span class="o">.</span><span class="n">conditional_jump</span><span class="p">(</span><span class="n">end_relational</span><span class="p">,</span> <span class="n">tmpl</span><span class="p">,</span> <span class="n">c</span><span class="o">.</span><span class="n">negate</span><span class="p">(),</span> <span class="n">tmpr</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span>
+            <span class="n">RiscV</span><span class="o">.</span><span class="n">li</span><span class="p">(</span><span class="n">dest</span><span class="p">,</span> <span class="n">Operands</span><span class="o">.</span><span class="n">Immediate</span><span class="p">(</span><span class="mi">1</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span><span class="n">end_relational</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dest</span></div>
+
+        <span class="c1"># END CUT</span>
+        <span class="c1"># UNCOMMENT(codegen) raise NotImplementedError()  # TODO</span>
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.visitMultiplicativeExpr">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitMultiplicativeExpr">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visitMultiplicativeExpr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operands</span><span class="o">.</span><span class="n">Temporary</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">ctx</span><span class="o">.</span><span class="n">myop</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="n">div_by_zero_lbl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_label_div_by_zero</span><span class="p">()</span>
+        <span class="c1"># BEGIN CUT (codegen)</span>
+        <span class="n">tmpl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">expr</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+        <span class="n">tmpr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">expr</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">dest_temp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fresh_tmp</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">ctx</span><span class="o">.</span><span class="n">myop</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">MiniCParser</span><span class="o">.</span><span class="n">MULT</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span><span class="n">RiscV</span><span class="o">.</span><span class="n">mul</span><span class="p">(</span><span class="n">dest_temp</span><span class="p">,</span> <span class="n">tmpl</span><span class="p">,</span> <span class="n">tmpr</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">ctx</span><span class="o">.</span><span class="n">myop</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">MiniCParser</span><span class="o">.</span><span class="n">DIV</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span><span class="n">RiscV</span><span class="o">.</span><span class="n">conditional_jump</span><span class="p">(</span>
+                <span class="n">div_by_zero_lbl</span><span class="p">,</span> <span class="n">tmpr</span><span class="p">,</span> <span class="n">Condition</span><span class="p">(</span><span class="s2">&quot;beq&quot;</span><span class="p">),</span> <span class="n">Operands</span><span class="o">.</span><span class="n">ZERO</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span><span class="n">RiscV</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="n">dest_temp</span><span class="p">,</span> <span class="n">tmpl</span><span class="p">,</span> <span class="n">tmpr</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">ctx</span><span class="o">.</span><span class="n">myop</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">MiniCParser</span><span class="o">.</span><span class="n">MOD</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span><span class="n">RiscV</span><span class="o">.</span><span class="n">conditional_jump</span><span class="p">(</span>
+                <span class="n">div_by_zero_lbl</span><span class="p">,</span> <span class="n">tmpr</span><span class="p">,</span> <span class="n">Condition</span><span class="p">(</span><span class="s2">&quot;beq&quot;</span><span class="p">),</span> <span class="n">Operands</span><span class="o">.</span><span class="n">ZERO</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span><span class="n">RiscV</span><span class="o">.</span><span class="n">rem</span><span class="p">(</span><span class="n">dest_temp</span><span class="p">,</span> <span class="n">tmpl</span><span class="p">,</span> <span class="n">tmpr</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">MiniCInternalError</span><span class="p">(</span><span class="s2">&quot;Multiplicative expr, but not MUL|DIV|MOD?&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dest_temp</span></div>
+
+        <span class="c1"># END CUT</span>
+        <span class="c1"># UNCOMMENT(codegen) raise NotImplementedError()  # TODO</span>
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.visitNotExpr">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitNotExpr">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visitNotExpr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operands</span><span class="o">.</span><span class="n">Temporary</span><span class="p">:</span>
+        <span class="c1"># BEGIN CUT (codegen)</span>
+        <span class="n">temp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">expr</span><span class="p">())</span>
+        <span class="n">dest_temp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fresh_tmp</span><span class="p">()</span>
+        <span class="c1"># there is no boolean not :-(</span>
+        <span class="n">labelneg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fresh_label</span><span class="p">(</span><span class="s2">&quot;cond_neg&quot;</span><span class="p">)</span>
+        <span class="n">labelend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fresh_label</span><span class="p">(</span><span class="s2">&quot;cond_end&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span><span class="n">RiscV</span><span class="o">.</span><span class="n">conditional_jump</span><span class="p">(</span>
+            <span class="n">labelneg</span><span class="p">,</span> <span class="n">temp</span><span class="p">,</span>
+            <span class="n">Condition</span><span class="p">(</span><span class="s2">&quot;beq&quot;</span><span class="p">),</span> <span class="n">Operands</span><span class="o">.</span><span class="n">ZERO</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span>
+            <span class="n">RiscV</span><span class="o">.</span><span class="n">li</span><span class="p">(</span><span class="n">dest_temp</span><span class="p">,</span> <span class="n">Operands</span><span class="o">.</span><span class="n">Immediate</span><span class="p">(</span><span class="mi">0</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span><span class="n">RiscV</span><span class="o">.</span><span class="n">jump</span><span class="p">(</span><span class="n">labelend</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span><span class="n">labelneg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span>
+            <span class="n">RiscV</span><span class="o">.</span><span class="n">li</span><span class="p">(</span><span class="n">dest_temp</span><span class="p">,</span> <span class="n">Operands</span><span class="o">.</span><span class="n">Immediate</span><span class="p">(</span><span class="mi">1</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span><span class="n">labelend</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dest_temp</span></div>
+
+        <span class="c1"># END CUT</span>
+        <span class="c1"># UNCOMMENT(codegen) raise NotImplementedError()  # TODO</span>
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.visitUnaryMinusExpr">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitUnaryMinusExpr">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visitUnaryMinusExpr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operands</span><span class="o">.</span><span class="n">Temporary</span><span class="p">:</span>
+        <span class="c1"># BEGIN CUT(codegen)</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">expr</span><span class="p">())</span>
+        <span class="n">dest_temp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fresh_tmp</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span><span class="n">RiscV</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">dest_temp</span><span class="p">,</span> <span class="n">Operands</span><span class="o">.</span><span class="n">ZERO</span><span class="p">,</span> <span class="n">tmp</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">dest_temp</span></div>
+
+        <span class="c1"># END CUT</span>
+        <span class="c1"># UNCOMMENT(codegen) raise NotImplementedError(&quot;unaryminusexpr&quot;)  # TODO</span>
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.visitProgRule">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitProgRule">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visitProgRule</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">visitChildren</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span></div>
+
+
+    <span class="c1"># BEGIN CUT (functions)</span>
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.visitParamDecl">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitParamDecl">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visitParamDecl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operands</span><span class="o">.</span><span class="n">Temporary</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ctx</span><span class="o">.</span><span class="n">ID</span><span class="p">()</span><span class="o">.</span><span class="n">getText</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.visitParamListBase">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitParamListBase">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visitParamListBase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">param</span><span class="p">()),)</span></div>
+
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.visitParamList">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitParamList">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visitParamList</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operands</span><span class="o">.</span><span class="n">Temporary</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">param</span><span class="p">()),)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">param_l</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.save_regs">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.save_regs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_regs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">regset</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">regset</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span>
+                <span class="n">RiscV</span><span class="o">.</span><span class="n">sd</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">Operands</span><span class="o">.</span><span class="n">Offset</span><span class="p">(</span><span class="n">Operands</span><span class="o">.</span><span class="n">SP</span><span class="p">,</span> <span class="n">offset</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="mi">8</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.restore_regs">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.restore_regs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">restore_regs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">regset</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">regset</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span>
+                <span class="n">RiscV</span><span class="o">.</span><span class="n">ld</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">Operands</span><span class="o">.</span><span class="n">Offset</span><span class="p">(</span><span class="n">Operands</span><span class="o">.</span><span class="n">SP</span><span class="p">,</span> <span class="n">offset</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="mi">8</span><span class="p">)))</span></div>
+
+
+    <span class="c1"># END CUT</span>
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.visitFuncDef">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitFuncDef">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visitFuncDef</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">funcname</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">ID</span><span class="p">()</span><span class="o">.</span><span class="n">getText</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_function</span> <span class="o">=</span> <span class="n">LinearCode</span><span class="p">(</span><span class="n">funcname</span><span class="p">)</span>
+
+        <span class="c1"># Our code can deal with multiple functions, and each function is a</span>
+        <span class="c1"># different LinearCode object. But don&#39;t bother the user with</span>
+        <span class="c1"># self._current_function each time, define a few shortcuts to make the</span>
+        <span class="c1"># code simpler. This comes here and not in __init__ since we need</span>
+        <span class="c1"># _current_fuction to be set, and need to redefine the shortcut when</span>
+        <span class="c1"># _current_function changes.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fresh_tmp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_function</span><span class="o">.</span><span class="n">fdata</span><span class="o">.</span><span class="n">fresh_tmp</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fresh_label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_function</span><span class="o">.</span><span class="n">fdata</span><span class="o">.</span><span class="n">fresh_label</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_statement</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_function</span><span class="o">.</span><span class="n">add_statement</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_statement</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_function</span><span class="o">.</span><span class="n">add_statement</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_instruction_PRINTLN_INT</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_function</span><span class="o">.</span><span class="n">add_instruction_PRINTLN_INT</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_comment</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_function</span><span class="o">.</span><span class="n">add_comment</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_label_div_by_zero</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_function</span><span class="o">.</span><span class="n">fdata</span><span class="o">.</span><span class="n">get_label_div_by_zero</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_symbol_table</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="c1"># BEGIN CUT (functions)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_regs</span><span class="p">(</span><span class="n">Operands</span><span class="o">.</span><span class="n">S</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="mi">16</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ctx</span><span class="o">.</span><span class="n">param_l</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">param_l</span><span class="p">())</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fresh_tmp</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_symbol_table</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span><span class="n">RiscV</span><span class="o">.</span><span class="n">mv</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Operands</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="c1"># END CUT</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">vardecl_l</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">block</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_comment</span><span class="p">(</span><span class="s2">&quot;Return at end of function:&quot;</span><span class="p">)</span>
+        <span class="c1"># BEGIN CUT (functions)</span>
+        <span class="n">ret_temp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">expr</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span><span class="n">RiscV</span><span class="o">.</span><span class="n">mv</span><span class="p">(</span><span class="n">Operands</span><span class="o">.</span><span class="n">A0</span><span class="p">,</span> <span class="n">ret_temp</span><span class="p">))</span>
+
+        <span class="c1"># we leave 2 words for the saving of sp and fp</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">restore_regs</span><span class="p">(</span><span class="n">Operands</span><span class="o">.</span><span class="n">S</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="mi">16</span><span class="p">)</span>
+
+        <span class="c1"># END CUT</span>
+        <span class="c1"># UNCOMMENT (functions) # This skeleton doesn&#39;t deal properly with functions, and</span>
+        <span class="c1"># UNCOMMENT (functions) # hardcodes a &quot;return 0;&quot; at the end of function. Generate</span>
+        <span class="c1"># UNCOMMENT (functions) # code for this &quot;return 0;&quot;.</span>
+        <span class="c1"># UNCOMMENT (functions) self.add_statement(</span>
+        <span class="c1"># UNCOMMENT (functions)     RiscV.li(Operands.A0, Operands.Immediate(0)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_functions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_function</span><span class="p">)</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_function</span></div>
+
+
+    <span class="c1"># BEGIN CUT (functions)</span>
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.visitExprListBase">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitExprListBase">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visitExprListBase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">expr</span><span class="p">(),)</span></div>
+
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.visitExprList">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitExprList">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visitExprList</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">expr</span><span class="p">(),)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">expr_l</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.visitFuncCall">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitFuncCall">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visitFuncCall</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operands</span><span class="o">.</span><span class="n">Temporary</span><span class="p">:</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">ID</span><span class="p">()</span><span class="o">.</span><span class="n">getText</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">ctx</span><span class="o">.</span><span class="n">expr_l</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">expr_l</span><span class="p">())</span>
+        <span class="n">arg_temps</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+            <span class="n">arg_temps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
+        <span class="c1"># we leave the space to save both sp and fp, and the registers si</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_regs</span><span class="p">(</span><span class="n">Operands</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">Operands</span><span class="o">.</span><span class="n">S</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span> <span class="o">*</span> <span class="mi">8</span><span class="p">)</span>
+
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span><span class="n">RiscV</span><span class="o">.</span><span class="n">mv</span><span class="p">(</span><span class="n">Operands</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">arg_temps</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span><span class="n">RiscV</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">restore_regs</span><span class="p">(</span><span class="n">Operands</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">Operands</span><span class="o">.</span><span class="n">S</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span> <span class="o">*</span> <span class="mi">8</span><span class="p">)</span>
+        <span class="n">dest_temp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fresh_tmp</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span><span class="n">RiscV</span><span class="o">.</span><span class="n">mv</span><span class="p">(</span><span class="n">dest_temp</span><span class="p">,</span> <span class="n">Operands</span><span class="o">.</span><span class="n">A0</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">dest_temp</span></div>
+
+
+    <span class="c1"># END CUT</span>
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.visitAssignStat">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitAssignStat">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visitAssignStat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_debug</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;assign statement, rightexpression is:&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">Trees</span><span class="o">.</span><span class="n">toStringTree</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">expr</span><span class="p">(),</span> <span class="p">[],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parser</span><span class="p">))</span>
+        <span class="n">expr_temp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">expr</span><span class="p">())</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">ID</span><span class="p">()</span><span class="o">.</span><span class="n">getText</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span><span class="n">RiscV</span><span class="o">.</span><span class="n">mv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_symbol_table</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">expr_temp</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.visitIfStat">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitIfStat">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visitIfStat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_debug</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;if statement&quot;</span><span class="p">)</span>
+        <span class="n">end_if_label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fresh_label</span><span class="p">(</span><span class="s2">&quot;end_if&quot;</span><span class="p">)</span>
+        <span class="c1"># UNCOMMENT(codegen) raise NotImplementedError()  # TODO</span>
+        <span class="c1"># BEGIN CUT (codegen)</span>
+        <span class="n">else_label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fresh_label</span><span class="p">(</span><span class="s1">&#39;else&#39;</span><span class="p">)</span>
+        <span class="n">cond</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">expr</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span>
+            <span class="n">RiscV</span><span class="o">.</span><span class="n">conditional_jump</span><span class="p">(</span>
+                <span class="n">else_label</span><span class="p">,</span> <span class="n">cond</span><span class="p">,</span> <span class="n">Condition</span><span class="p">(</span><span class="s2">&quot;beq&quot;</span><span class="p">),</span> <span class="n">Operands</span><span class="o">.</span><span class="n">ZERO</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">then_block</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span><span class="n">RiscV</span><span class="o">.</span><span class="n">jump</span><span class="p">(</span><span class="n">end_if_label</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span><span class="n">else_label</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ctx</span><span class="o">.</span><span class="n">else_block</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_debug</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;else  &quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">else_block</span><span class="p">)</span>
+        <span class="c1"># END CUT</span>
+        <span class="c1"># BEGIN CUT</span>
+        <span class="c1"># Following is not needed with RiscV, but was with LEIA.</span>
+        <span class="c1"># Keeping it here in case we need it later.</span>
+        <span class="c1"># NOP, to avoid jump with offset +1.</span>
+        <span class="c1"># self.add_instruction_SUB(R0, R0, 0)</span>
+        <span class="c1"># END CUT</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span><span class="n">end_if_label</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.visitWhileStat">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitWhileStat">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visitWhileStat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_debug</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;while statement, condition is:&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">Trees</span><span class="o">.</span><span class="n">toStringTree</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">expr</span><span class="p">(),</span> <span class="p">[],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parser</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;and block is:&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">Trees</span><span class="o">.</span><span class="n">toStringTree</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">stat_block</span><span class="p">(),</span> <span class="p">[],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parser</span><span class="p">))</span>
+        <span class="c1"># BEGIN CUT (codegen)</span>
+        <span class="n">labelbegin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fresh_label</span><span class="p">(</span><span class="s2">&quot;begin_while&quot;</span><span class="p">)</span>
+        <span class="n">labelend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fresh_label</span><span class="p">(</span><span class="s2">&quot;end_while&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span><span class="n">labelbegin</span><span class="p">)</span>
+        <span class="n">cond_temp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">expr</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span>
+            <span class="n">RiscV</span><span class="o">.</span><span class="n">conditional_jump</span><span class="p">(</span>
+                <span class="n">labelend</span><span class="p">,</span> <span class="n">cond_temp</span><span class="p">,</span> <span class="n">Condition</span><span class="p">(</span><span class="s2">&quot;beq&quot;</span><span class="p">),</span> <span class="n">Operands</span><span class="o">.</span><span class="n">ZERO</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">body</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span><span class="n">RiscV</span><span class="o">.</span><span class="n">jump</span><span class="p">(</span><span class="n">labelbegin</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span><span class="n">labelend</span><span class="p">)</span></div>
+
+        <span class="c1"># END CUT</span>
+        <span class="c1"># UNCOMMENT(codegen) raise NotImplementedError()  # TODO</span>
+    <span class="c1"># visit statements</span>
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.visitPrintlnintStat">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitPrintlnintStat">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visitPrintlnintStat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">expr_loc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">expr</span><span class="p">())</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_debug</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;print_int statement, expression is:&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">Trees</span><span class="o">.</span><span class="n">toStringTree</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">expr</span><span class="p">(),</span> <span class="p">[],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parser</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_instruction_PRINTLN_INT</span><span class="p">(</span><span class="n">expr_loc</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.visitPrintlnboolStat">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitPrintlnboolStat">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visitPrintlnboolStat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">expr_loc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">expr</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_instruction_PRINTLN_INT</span><span class="p">(</span><span class="n">expr_loc</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.visitPrintlnfloatStat">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitPrintlnfloatStat">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visitPrintlnfloatStat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">MiniCUnsupportedError</span><span class="p">(</span><span class="s2">&quot;Unsupported type float&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.visitPrintlnstringStat">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitPrintlnstringStat">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visitPrintlnstringStat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">MiniCUnsupportedError</span><span class="p">(</span><span class="s2">&quot;Unsupported type string&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.visitStatList">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitStatList">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visitStatList</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">stat</span> <span class="ow">in</span> <span class="n">ctx</span><span class="o">.</span><span class="n">stat</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_comment</span><span class="p">(</span><span class="n">Trees</span><span class="o">.</span><span class="n">toStringTree</span><span class="p">(</span><span class="n">stat</span><span class="p">,</span> <span class="p">[],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parser</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">stat</span><span class="p">)</span></div>
+
+    <span class="c1"># BEGIN CUT (extension)</span>
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.visitForForStat">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitForForStat">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visitForForStat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;fortran for&quot;</span><span class="p">)</span></div>
+
+
+    <span class="n">continue_label_stack</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Label</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># pragma: no cover</span>
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.visitForCStat">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitForCStat">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visitForCStat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+        <span class="c1"># Local import to avoid issues when replacing one module individually.</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">ForC.ForC</span><span class="w"> </span><span class="kn">import</span> <span class="n">codegen_for_c</span>
+        <span class="k">return</span> <span class="n">codegen_for_c</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.visitContinueStat">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitContinueStat">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visitContinueStat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+        <span class="c1"># Local import to avoid issues when replacing one module individually.</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">ForC.ForC</span><span class="w"> </span><span class="kn">import</span> <span class="n">codegen_for_c_continue</span>
+        <span class="k">return</span> <span class="n">codegen_for_c_continue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.visitArrayAllocExpr">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitArrayAllocExpr">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visitArrayAllocExpr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;array&quot;</span><span class="p">)</span>  <span class="c1"># pragma: no cover</span></div>
+
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.visitArrayReadExpr">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitArrayReadExpr">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visitArrayReadExpr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;array&quot;</span><span class="p">)</span>  <span class="c1"># pragma: no cover</span></div>
+
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.visitArrayWriteStat">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitArrayWriteStat">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visitArrayWriteStat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;array&quot;</span><span class="p">)</span>  <span class="c1"># pragma: no cover</span></div>
+
+
+<div class="viewcode-block" id="MiniCCodeGen3AVisitor.visitArrayType">
+<a class="viewcode-back" href="../../api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitArrayType">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visitArrayType</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;array&quot;</span><span class="p">)</span>  <span class="c1"># pragma: no cover</span></div>
+</div>
+
+    <span class="c1"># END CUT (extension)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, compil-lyon.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

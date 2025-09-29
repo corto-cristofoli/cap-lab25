@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CodeGen.MiniCCodeGen3AVisitor module &mdash; MiniC  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../_static/doctools.js?v=9bcbadda"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            MiniC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Lib.Errors.html">Base library - Errors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Lib.Statement.html">Base library - Statement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Lib.RiscV.html">Base library - RISC-V instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Lib.Operands.html">Base library - Operands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Lib.FunctionData.html">Base library - Function data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Lib.LinearCode.html">Linear intermediate representation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Lib.Allocator.html">Temporary allocation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">MiniC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">CodeGen.MiniCCodeGen3AVisitor module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/CodeGen.MiniCCodeGen3AVisitor.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-CodeGen.MiniCCodeGen3AVisitor">
+<span id="codegen-miniccodegen3avisitor-module"></span><h1>CodeGen.MiniCCodeGen3AVisitor module<a class="headerlink" href="#module-CodeGen.MiniCCodeGen3AVisitor" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">CodeGen.MiniCCodeGen3AVisitor.</span></span><span class="sig-name descname"><span class="pre">MiniCCodeGen3AVisitor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">debug</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parser</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">MiniCVisitor</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.fresh_tmp">
+<span class="sig-name descname"><span class="pre">fresh_tmp</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Temporary" title="Lib.Operands.Temporary"><span class="pre">Temporary</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.fresh_tmp" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.fresh_label">
+<span class="sig-name descname"><span class="pre">fresh_label</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="Lib.Statement.html#Lib.Statement.Label" title="Lib.Statement.Label"><span class="pre">Label</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.fresh_label" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.add_statement">
+<span class="sig-name descname"><span class="pre">add_statement</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="Lib.Statement.html#Lib.Statement.Comment" title="Lib.Statement.Comment"><span class="pre">Comment</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="Lib.Statement.html#Lib.Statement.Label" title="Lib.Statement.Label"><span class="pre">Label</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="Lib.Statement.html#Lib.Statement.Instru3A" title="Lib.Statement.Instru3A"><span class="pre">Instru3A</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="Lib.Statement.html#Lib.Statement.AbsoluteJump" title="Lib.Statement.AbsoluteJump"><span class="pre">AbsoluteJump</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="Lib.Statement.html#Lib.Statement.ConditionalJump" title="Lib.Statement.ConditionalJump"><span class="pre">ConditionalJump</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.add_statement" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.add_instruction_PRINTLN_INT">
+<span class="sig-name descname"><span class="pre">add_instruction_PRINTLN_INT</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="Lib.Operands.html#Lib.Operands.DataLocation" title="Lib.Operands.DataLocation"><span class="pre">DataLocation</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.add_instruction_PRINTLN_INT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.add_comment">
+<span class="sig-name descname"><span class="pre">add_comment</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.add_comment" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.get_label_div_by_zero">
+<span class="sig-name descname"><span class="pre">get_label_div_by_zero</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="Lib.Statement.html#Lib.Statement.Label" title="Lib.Statement.Label"><span class="pre">Label</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.get_label_div_by_zero" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.get_functions">
+<span class="sig-name descname"><span class="pre">get_functions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="Lib.LinearCode.html#Lib.LinearCode.LinearCode" title="Lib.LinearCode.LinearCode"><span class="pre">LinearCode</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.get_functions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.get_functions" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.printSymbolTable">
+<span class="sig-name descname"><span class="pre">printSymbolTable</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.printSymbolTable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.printSymbolTable" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitVarDecl">
+<span class="sig-name descname"><span class="pre">visitVarDecl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.visitVarDecl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitVarDecl" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitIdList">
+<span class="sig-name descname"><span class="pre">visitIdList</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.visitIdList"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitIdList" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitIdListBase">
+<span class="sig-name descname"><span class="pre">visitIdListBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.visitIdListBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitIdListBase" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitParExpr">
+<span class="sig-name descname"><span class="pre">visitParExpr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Temporary" title="Lib.Operands.Temporary"><span class="pre">Temporary</span></a></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.visitParExpr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitParExpr" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitIntAtom">
+<span class="sig-name descname"><span class="pre">visitIntAtom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Temporary" title="Lib.Operands.Temporary"><span class="pre">Temporary</span></a></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.visitIntAtom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitIntAtom" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitFloatAtom">
+<span class="sig-name descname"><span class="pre">visitFloatAtom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Temporary" title="Lib.Operands.Temporary"><span class="pre">Temporary</span></a></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.visitFloatAtom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitFloatAtom" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitBooleanAtom">
+<span class="sig-name descname"><span class="pre">visitBooleanAtom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Temporary" title="Lib.Operands.Temporary"><span class="pre">Temporary</span></a></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.visitBooleanAtom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitBooleanAtom" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitIdAtom">
+<span class="sig-name descname"><span class="pre">visitIdAtom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Temporary" title="Lib.Operands.Temporary"><span class="pre">Temporary</span></a></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.visitIdAtom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitIdAtom" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitStringAtom">
+<span class="sig-name descname"><span class="pre">visitStringAtom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Temporary" title="Lib.Operands.Temporary"><span class="pre">Temporary</span></a></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.visitStringAtom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitStringAtom" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitAtomExpr">
+<span class="sig-name descname"><span class="pre">visitAtomExpr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Temporary" title="Lib.Operands.Temporary"><span class="pre">Temporary</span></a></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.visitAtomExpr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitAtomExpr" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitAdditiveExpr">
+<span class="sig-name descname"><span class="pre">visitAdditiveExpr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Temporary" title="Lib.Operands.Temporary"><span class="pre">Temporary</span></a></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.visitAdditiveExpr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitAdditiveExpr" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitOrExpr">
+<span class="sig-name descname"><span class="pre">visitOrExpr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Temporary" title="Lib.Operands.Temporary"><span class="pre">Temporary</span></a></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.visitOrExpr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitOrExpr" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitAndExpr">
+<span class="sig-name descname"><span class="pre">visitAndExpr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Temporary" title="Lib.Operands.Temporary"><span class="pre">Temporary</span></a></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.visitAndExpr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitAndExpr" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitEqualityExpr">
+<span class="sig-name descname"><span class="pre">visitEqualityExpr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Temporary" title="Lib.Operands.Temporary"><span class="pre">Temporary</span></a></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.visitEqualityExpr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitEqualityExpr" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitRelationalExpr">
+<span class="sig-name descname"><span class="pre">visitRelationalExpr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Temporary" title="Lib.Operands.Temporary"><span class="pre">Temporary</span></a></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.visitRelationalExpr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitRelationalExpr" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitMultiplicativeExpr">
+<span class="sig-name descname"><span class="pre">visitMultiplicativeExpr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Temporary" title="Lib.Operands.Temporary"><span class="pre">Temporary</span></a></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.visitMultiplicativeExpr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitMultiplicativeExpr" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitNotExpr">
+<span class="sig-name descname"><span class="pre">visitNotExpr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Temporary" title="Lib.Operands.Temporary"><span class="pre">Temporary</span></a></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.visitNotExpr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitNotExpr" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitUnaryMinusExpr">
+<span class="sig-name descname"><span class="pre">visitUnaryMinusExpr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Temporary" title="Lib.Operands.Temporary"><span class="pre">Temporary</span></a></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.visitUnaryMinusExpr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitUnaryMinusExpr" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitProgRule">
+<span class="sig-name descname"><span class="pre">visitProgRule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.visitProgRule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitProgRule" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitParamDecl">
+<span class="sig-name descname"><span class="pre">visitParamDecl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Temporary" title="Lib.Operands.Temporary"><span class="pre">Temporary</span></a></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.visitParamDecl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitParamDecl" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitParamListBase">
+<span class="sig-name descname"><span class="pre">visitParamListBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.visitParamListBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitParamListBase" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitParamList">
+<span class="sig-name descname"><span class="pre">visitParamList</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Temporary" title="Lib.Operands.Temporary"><span class="pre">Temporary</span></a></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.visitParamList"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitParamList" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.save_regs">
+<span class="sig-name descname"><span class="pre">save_regs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">regset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.save_regs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.save_regs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.restore_regs">
+<span class="sig-name descname"><span class="pre">restore_regs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">regset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.restore_regs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.restore_regs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitFuncDef">
+<span class="sig-name descname"><span class="pre">visitFuncDef</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.visitFuncDef"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitFuncDef" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitExprListBase">
+<span class="sig-name descname"><span class="pre">visitExprListBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.visitExprListBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitExprListBase" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitExprList">
+<span class="sig-name descname"><span class="pre">visitExprList</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.visitExprList"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitExprList" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitFuncCall">
+<span class="sig-name descname"><span class="pre">visitFuncCall</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Temporary" title="Lib.Operands.Temporary"><span class="pre">Temporary</span></a></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.visitFuncCall"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitFuncCall" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitAssignStat">
+<span class="sig-name descname"><span class="pre">visitAssignStat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.visitAssignStat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitAssignStat" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitIfStat">
+<span class="sig-name descname"><span class="pre">visitIfStat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.visitIfStat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitIfStat" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitWhileStat">
+<span class="sig-name descname"><span class="pre">visitWhileStat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.visitWhileStat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitWhileStat" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitPrintlnintStat">
+<span class="sig-name descname"><span class="pre">visitPrintlnintStat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.visitPrintlnintStat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitPrintlnintStat" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitPrintlnboolStat">
+<span class="sig-name descname"><span class="pre">visitPrintlnboolStat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.visitPrintlnboolStat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitPrintlnboolStat" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitPrintlnfloatStat">
+<span class="sig-name descname"><span class="pre">visitPrintlnfloatStat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.visitPrintlnfloatStat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitPrintlnfloatStat" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitPrintlnstringStat">
+<span class="sig-name descname"><span class="pre">visitPrintlnstringStat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.visitPrintlnstringStat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitPrintlnstringStat" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitStatList">
+<span class="sig-name descname"><span class="pre">visitStatList</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.visitStatList"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitStatList" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitForForStat">
+<span class="sig-name descname"><span class="pre">visitForForStat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.visitForForStat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitForForStat" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.continue_label_stack">
+<span class="sig-name descname"><span class="pre">continue_label_stack</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="Lib.Statement.html#Lib.Statement.Label" title="Lib.Statement.Label"><span class="pre">Label</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.continue_label_stack" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitForCStat">
+<span class="sig-name descname"><span class="pre">visitForCStat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.visitForCStat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitForCStat" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitContinueStat">
+<span class="sig-name descname"><span class="pre">visitContinueStat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.visitContinueStat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitContinueStat" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitArrayAllocExpr">
+<span class="sig-name descname"><span class="pre">visitArrayAllocExpr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.visitArrayAllocExpr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitArrayAllocExpr" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitArrayReadExpr">
+<span class="sig-name descname"><span class="pre">visitArrayReadExpr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.visitArrayReadExpr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitArrayReadExpr" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitArrayWriteStat">
+<span class="sig-name descname"><span class="pre">visitArrayWriteStat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.visitArrayWriteStat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitArrayWriteStat" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitArrayType">
+<span class="sig-name descname"><span class="pre">visitArrayType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/CodeGen/MiniCCodeGen3AVisitor.html#MiniCCodeGen3AVisitor.visitArrayType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.visitArrayType" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, compil-lyon.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

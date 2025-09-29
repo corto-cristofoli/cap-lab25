@@ -1,0 +1,7 @@
+CodeGen.HybridNaiveAllocator module
+===================================
+
+.. automodule:: CodeGen.HybridNaiveAllocator
+   :members:
+   :show-inheritance:
+   :undoc-members:

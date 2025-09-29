@@ -1,0 +1,7 @@
+RegAlloc.SmartAllocator module
+==============================
+
+.. automodule:: RegAlloc.SmartAllocator
+   :members:
+   :show-inheritance:
+   :undoc-members:

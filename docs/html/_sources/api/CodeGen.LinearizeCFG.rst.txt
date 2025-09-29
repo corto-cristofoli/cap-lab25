@@ -1,0 +1,7 @@
+CodeGen.LinearizeCFG module
+===========================
+
+.. automodule:: CodeGen.LinearizeCFG
+   :members:
+   :show-inheritance:
+   :undoc-members:
