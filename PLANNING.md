@@ -36,7 +36,8 @@ _Academic first semester 2025-2026_
 
   3-Address Code generation [transparents](course/cap_cours04_3ad_codegen.pdf).
 
-- :hammer: Lab 4: Tuesday 30/09/2025, 10h15-12h15. Room E001 (Emma Nardino & Léo Paviet Salomon)
-  **Due <TBA>**
-
-  * Lab & supporting files TBA
+- :hammer: Lab 4a: Tuesday 30/09/2025, 10h15-12h15. Room E001 (Emma Nardino & Léo Paviet Salomon).
+  (First part of a two-parter lab. Will be due 8 days after the second part)
+  
+  * TP Codegen [TP04](Codegen/tp4a.pdf)
+  * Supporting files mostly in [MiniC/Codegen](MiniC/CodeGen/)
