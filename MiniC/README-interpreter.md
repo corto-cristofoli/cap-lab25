@@ -4,7 +4,7 @@ MIF08 / CAP / CS444 2024-25
 
 # Authors
 
-TODO: YOUR NAME HERE
+Corto CRISTOFOLI
 
 # Howto
 
@@ -17,12 +17,15 @@ You can select the files you want to test by using `make test FILTER='TypingAndI
 
 # Test design 
 
-TODO: explain your tests. Do not repeat what test files already contain, just give the main objectives of the tests.
+The tests are separated into 3 folders :
+- `good_tests` that are the tests that work
+- `bad_tests` that are the tests that fail not with the typing
+- `bad_typing_tests` that are the tests that fail because of typing
 
-# Design choices
 
-TODO: explain your choices - explain the limitations of your implementation.
 
 # Known bugs
 
-TODO: document any known bug and limitations. Did you do everything asked for? Did you implement an extension?
+There is a bug with the fortran-like loop. I think it is due to the fact that gcc can't compile it and I don't
+know how to solve it. Moreover the typing isn't working well
+

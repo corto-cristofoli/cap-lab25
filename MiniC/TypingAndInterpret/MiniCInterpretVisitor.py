@@ -1,4 +1,5 @@
 # Visitor to *interpret* MiniC files
+from math import copysign
 from typing import (
   Dict,
   List)
@@ -21,11 +22,21 @@ class MiniCInterpretVisitor(MiniCVisitor):
 
     def visitVarDecl(self, ctx) -> None:
         # Initialise all variables in self._memory
+        initial_val = {
+                "int": 0,
+                "float": 0.0,
+                "bool": False,
+                "string": ""
+                }
         type_str = ctx.typee().getText()
-        raise NotImplementedError(f"Initialization for type {type_str}")
+        id_str_l = self.visit(ctx.id_l())
+        for id_str in id_str_l:
+            self._memory[id_str] = initial_val[type_str]
 
     def visitIdList(self, ctx) -> List[str]:
-        raise NotImplementedError()
+        queue = self.visit(ctx.id_l())
+        queue.append(ctx.ID().getText())
+        return queue
 
     def visitIdListBase(self, ctx) -> List[str]:
         return [ctx.ID().getText()]
@@ -45,7 +56,11 @@ class MiniCInterpretVisitor(MiniCVisitor):
         return ctx.getText() == "true"
 
     def visitIdAtom(self, ctx) -> MINIC_VALUE:
-        raise NotImplementedError()
+        # raise NotImplementedError()
+        id_str = ctx.getText()
+        # if id_str not in self._memory:
+        #     raise MiniCRuntimeError("Variable {} not defined".format(id_str))
+        return self._memory[id_str]
 
     def visitStringAtom(self, ctx) -> str:
         return ctx.getText()[1:-1]  # Remove the ""
@@ -115,11 +130,22 @@ class MiniCInterpretVisitor(MiniCVisitor):
             case MiniCParser.MULT:
                 return lval * rval
             case MiniCParser.DIV:
-                # TODO : interpret division
-                raise NotImplementedError()
+                if rval == 0:
+                    raise MiniCRuntimeError("Division by 0")
+                if isinstance(lval, int):
+                    # int division in C different that in Python
+                    s, l, r = lval * rval, abs(lval), abs(rval)
+                    return int(copysign(l // r, s))
+                else:
+                    return lval / rval
             case MiniCParser.MOD:
-                # TODO : interpret modulo
-                raise NotImplementedError()
+                if rval == 0:
+                    raise MiniCRuntimeError("Modulo by 0")
+                # modulo in C different that in Python
+                # we use the fact that a = (a//b)*b + a%b
+                s, l, r = lval * rval, abs(lval), abs(rval)
+                div = int(copysign(l // r, s))
+                return lval - div * rval
             case _: raise MiniCInternalError(
                     f"Unknown multiplicative operator '{ctx.myop}'")
 
@@ -152,13 +178,55 @@ class MiniCInterpretVisitor(MiniCVisitor):
         print(val)
 
     def visitAssignStat(self, ctx) -> None:
-        raise NotImplementedError()
+        val = self.visit(ctx.expr())
+        Id = ctx.ID().getText()
+        if Id not in self._memory:
+            raise MiniCRuntimeError("Variable {} not initialised".format(Id))
+        self._memory[Id] = val
 
     def visitIfStat(self, ctx) -> None:
-        raise NotImplementedError()
+        # raise NotImplementedError()
+        b_val = self.visit(ctx.expr())
+        if b_val:
+            try:
+                self.visit(ctx.stat_block())
+            except AttributeError:
+                self.visit(ctx.stat_block(0))
+        else:
+            try:
+                self.visit(ctx.stat_block(1))
+            except AttributeError:
+                pass  # if there is no else condition we simply skip
 
     def visitWhileStat(self, ctx) -> None:
-        raise NotImplementedError()
+        # raise NotImplementedError()
+        b_val = self.visit(ctx.expr())
+        while b_val:
+            self.visit(ctx.stat_block())
+            b_val = self.visit(ctx.expr())
+
+    def visitForStat(self, ctx) -> None:
+        self.visit(ctx.assignment())
+        val = int(ctx.start.expr().getText())
+        loop_id = ctx.start.ID().getText()
+        bound_val = self.visit(ctx.expr(0))
+        step = self.visit(ctx.expr(1))
+        if bound_val < val:
+            bound_val -= 2  # just to use python for loop correctly
+        for i in range(val, bound_val+1, step):
+            self._memory[loop_id] = i
+            self.visit(ctx.stat_block())
+    # def visitForStat(self, ctx) -> None:
+    #     self.visit(ctx.assignment(0))
+    #     val = int(ctx.start.expr().getText())
+    #     loop_id = ctx.start.ID().getText()
+    #     bound_val = self.visit(ctx.expr())
+    #     if ctx.step.ID().getText() != loop_id:
+    #         raise MiniCRuntimeError()
+    #
+    #     while bound_val:
+    #         self._memory[loop_id] = i
+    #         self.visit(ctx.stat_block())
 
     # TOPLEVEL
     def visitProgRule(self, ctx) -> None:

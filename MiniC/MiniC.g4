@@ -23,7 +23,8 @@ block: stat*   #statList;
 stat: assignment SCOL
     | if_stat
     | while_stat
-    | print_stat  
+    | print_stat
+    | for_stat
     ;
 
 assignment: ID ASSIGN expr #assignStat;
@@ -37,6 +38,8 @@ stat_block: OBRACE block CBRACE
 
 while_stat: WHILE OPAR expr CPAR body=stat_block #whileStat;
 
+for_stat: FOR start=assignment TO end=expr BY step=expr body=stat_block #forStat;
+// NOTE: it seems that this loop may creates an error because it is not a C loop
 
 print_stat
     : PRINTLN_INT OPAR expr CPAR SCOL         #printlnintStat
@@ -98,6 +101,9 @@ FALSE : 'false';
 IF : 'if';
 ELSE : 'else';
 WHILE : 'while';
+FOR : 'for';
+TO : 'to';
+BY : 'by';
 RETURN : 'return';
 PRINTLN_INT : 'println_int';
 PRINTLN_BOOL : 'println_bool';
