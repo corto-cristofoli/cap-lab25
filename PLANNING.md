@@ -41,3 +41,7 @@ _Academic first semester 2025-2026_
   
   * TP Codegen [TP04](Codegen/tp4a.pdf)
   * Supporting files mostly in [MiniC/Codegen](MiniC/CodeGen/)
+
+- :book: Course: Monday 6/10/2025, 10h15-12h15. Amphi B (Gabriel Radanne)
+
+  Intermediate Representation [transparents](course/cap_cours05_irs.pdf).
