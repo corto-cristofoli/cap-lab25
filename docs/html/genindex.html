@@ -50,6 +50,8 @@
 <li class="toctree-l1"><a class="reference internal" href="api/Lib.FunctionData.html">Base library - Function data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/Lib.LinearCode.html">Linear intermediate representation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/Lib.Allocator.html">Temporary allocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/Lib.CFG.html">Control Flow Graph - CFG and Basic blocks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/Lib.Terminator.html">Control Flow Graph - Terminators</a></li>
 </ul>
 
         </div>
@@ -117,9 +119,15 @@
 </li>
       <li><a href="api/Lib.RiscV.html#Lib.RiscV.add">add() (in module Lib.RiscV)</a>
 </li>
+      <li><a href="api/Lib.CFG.html#Lib.CFG.CFG.add_block">add_block() (Lib.CFG.CFG method)</a>
+</li>
       <li><a href="api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.add_comment">add_comment (CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor attribute)</a>
 </li>
       <li><a href="api/Lib.LinearCode.html#Lib.LinearCode.LinearCode.add_comment">add_comment() (Lib.LinearCode.LinearCode method)</a>
+</li>
+      <li><a href="api/Lib.CFG.html#Lib.CFG.CFG.add_edge">add_edge() (Lib.CFG.CFG method)</a>
+</li>
+      <li><a href="api/Lib.CFG.html#Lib.CFG.Block.add_instruction">add_instruction() (Lib.CFG.Block method)</a>
 </li>
       <li><a href="api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.add_instruction_PRINTLN_INT">add_instruction_PRINTLN_INT (CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor attribute)</a>
 </li>
@@ -127,6 +135,8 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/Lib.CFG.html#Lib.CFG.Block.add_phi">add_phi() (Lib.CFG.Block method)</a>
+</li>
       <li><a href="api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.add_statement">add_statement (CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor attribute)</a>
 </li>
       <li><a href="api/Lib.LinearCode.html#Lib.LinearCode.LinearCode.add_statement">add_statement() (Lib.LinearCode.LinearCode method)</a>
@@ -148,6 +158,10 @@
 </li>
         <li><a href="api/Lib.Statement.html#Lib.Statement.Instruction.args">(Lib.Statement.Instruction method)</a>
 </li>
+        <li><a href="api/Lib.Terminator.html#Lib.Terminator.BranchingTerminator.args">(Lib.Terminator.BranchingTerminator method)</a>
+</li>
+        <li><a href="api/Lib.Terminator.html#Lib.Terminator.Return.args">(Lib.Terminator.Return method)</a>
+</li>
       </ul></li>
   </ul></td>
 </tr></table>
@@ -155,10 +169,14 @@
 <h2 id="B">B</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/CodeGen.BuildCFG.html#CodeGen.BuildCFG.build_cfg">build_cfg() (in module CodeGen.BuildCFG)</a>
+      <li><a href="api/Lib.CFG.html#Lib.CFG.Block">Block (class in Lib.CFG)</a>
+</li>
+      <li><a href="api/Lib.Terminator.html#Lib.Terminator.BranchingTerminator">BranchingTerminator (class in Lib.Terminator)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/CodeGen.BuildCFG.html#CodeGen.BuildCFG.build_cfg">build_cfg() (in module CodeGen.BuildCFG)</a>
+</li>
       <li><a href="api/RegAlloc.SmartAllocator.html#RegAlloc.SmartAllocator.SmartAllocator.build_interference_graph">build_interference_graph() (RegAlloc.SmartAllocator.SmartAllocator method)</a>
 </li>
   </ul></td>
@@ -168,6 +186,8 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/Lib.RiscV.html#Lib.RiscV.call">call() (in module Lib.RiscV)</a>
+</li>
+      <li><a href="api/Lib.CFG.html#Lib.CFG.CFG">CFG (class in Lib.CFG)</a>
 </li>
       <li>
     CodeGen
@@ -218,7 +238,11 @@
       <li><a href="api/Lib.Statement.html#Lib.Statement.Comment.comment">comment (Lib.Statement.Comment attribute)</a>
 </li>
       <li><a href="api/Lib.Statement.html#Lib.Statement.ConditionalJump.cond">cond (Lib.Statement.ConditionalJump attribute)</a>
+
+      <ul>
+        <li><a href="api/Lib.Terminator.html#Lib.Terminator.BranchingTerminator.cond">(Lib.Terminator.BranchingTerminator attribute)</a>
 </li>
+      </ul></li>
       <li><a href="api/Lib.Operands.html#Lib.Operands.Condition">Condition (class in Lib.Operands)</a>
 </li>
       <li><a href="api/Lib.RiscV.html#Lib.RiscV.conditional_jump">conditional_jump() (in module Lib.RiscV)</a>
@@ -271,8 +295,12 @@
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/Lib.LinearCode.html#Lib.LinearCode.LinearCode.fdata">fdata (Lib.LinearCode.LinearCode attribute)</a>
+      <li><a href="api/Lib.CFG.html#Lib.CFG.CFG.fdata">fdata (Lib.CFG.CFG attribute)</a>
+
+      <ul>
+        <li><a href="api/Lib.LinearCode.html#Lib.LinearCode.LinearCode.fdata">(Lib.LinearCode.LinearCode attribute)</a>
 </li>
+      </ul></li>
       <li><a href="api/RegAlloc.LivenessDataFlow.html#RegAlloc.LivenessDataFlow.LivenessDataFlow.fill_liveout">fill_liveout() (RegAlloc.LivenessDataFlow.LivenessDataFlow method)</a>
 </li>
       <li><a href="api/CodeGen.BuildCFG.html#CodeGen.BuildCFG.find_leaders">find_leaders() (in module CodeGen.BuildCFG)</a>
@@ -307,6 +335,8 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/Lib.CFG.html#Lib.CFG.CFG.gather_defs">gather_defs() (Lib.CFG.CFG method)</a>
+</li>
       <li><a href="api/RegAlloc.LivenessSSA.html#RegAlloc.LivenessSSA.LivenessSSA.gather_uses">gather_uses() (RegAlloc.LivenessSSA.LivenessSSA method)</a>
 </li>
       <li><a href="api/RegAlloc.ExitSSA.html#RegAlloc.ExitSSA.generate_moves_from_phis">generate_moves_from_phis() (in module RegAlloc.ExitSSA)</a>
@@ -317,6 +347,8 @@
 </li>
       <li><a href="api/RegAlloc.SequentializeMoves.html#RegAlloc.SequentializeMoves.generate_xor_move">generate_xor_move() (in module RegAlloc.SequentializeMoves)</a>
 </li>
+      <li><a href="api/Lib.CFG.html#Lib.CFG.Block.get_all_statements">get_all_statements() (Lib.CFG.Block method)</a>
+</li>
       <li><a href="api/Lib.Operands.html#Lib.Operands.TemporaryPool.get_all_temps">get_all_temps() (Lib.Operands.TemporaryPool method)</a>
 </li>
       <li><a href="api/Lib.Operands.html#Lib.Operands.Temporary.get_alloced_loc">get_alloced_loc() (Lib.Operands.Temporary method)</a>
@@ -325,11 +357,27 @@
         <li><a href="api/Lib.Operands.html#Lib.Operands.TemporaryPool.get_alloced_loc">(Lib.Operands.TemporaryPool method)</a>
 </li>
       </ul></li>
+      <li><a href="api/Lib.CFG.html#Lib.CFG.CFG.get_block">get_block() (Lib.CFG.CFG method)</a>
+</li>
+      <li><a href="api/Lib.CFG.html#Lib.CFG.CFG.get_blocks">get_blocks() (Lib.CFG.CFG method)</a>
+</li>
+      <li><a href="api/Lib.CFG.html#Lib.CFG.Block.get_body">get_body() (Lib.CFG.Block method)</a>
+</li>
+      <li><a href="api/Lib.CFG.html#Lib.CFG.Block.get_body_and_terminator">get_body_and_terminator() (Lib.CFG.Block method)</a>
+</li>
+      <li><a href="api/Lib.CFG.html#Lib.CFG.CFG.get_end">get_end() (Lib.CFG.CFG method)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/Lib.CFG.html#Lib.CFG.CFG.get_entries">get_entries() (Lib.CFG.CFG method)</a>
+</li>
       <li><a href="api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.get_functions">get_functions() (CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor method)</a>
 </li>
+      <li><a href="api/Lib.CFG.html#Lib.CFG.Block.get_in">get_in() (Lib.CFG.Block method)</a>
+</li>
       <li><a href="api/Lib.LinearCode.html#Lib.LinearCode.LinearCode.get_instructions">get_instructions() (Lib.LinearCode.LinearCode method)</a>
+</li>
+      <li><a href="api/Lib.CFG.html#Lib.CFG.Block.get_label">get_label() (Lib.CFG.Block method)</a>
 </li>
       <li><a href="api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.get_label_div_by_zero">get_label_div_by_zero (CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor attribute)</a>
 </li>
@@ -343,6 +391,12 @@
         <li><a href="api/Lib.Operands.html#Lib.Operands.Offset.get_offset">(Lib.Operands.Offset method)</a>
 </li>
       </ul></li>
+      <li><a href="api/Lib.CFG.html#Lib.CFG.Block.get_phis">get_phis() (Lib.CFG.Block method)</a>
+</li>
+      <li><a href="api/Lib.CFG.html#Lib.CFG.CFG.get_start">get_start() (Lib.CFG.CFG method)</a>
+</li>
+      <li><a href="api/Lib.CFG.html#Lib.CFG.Block.get_terminator">get_terminator() (Lib.CFG.Block method)</a>
+</li>
       <li><a href="api/Lib.Operands.html#Lib.Operands.GP">GP (in module Lib.Operands)</a>
 </li>
       <li><a href="api/Lib.Operands.html#Lib.Operands.GP_REGS">GP_REGS (in module Lib.Operands)</a>
@@ -371,16 +425,26 @@
       </ul></li>
       <li><a href="api/RegAlloc.EnterSSA.html#RegAlloc.EnterSSA.insertPhis">insertPhis() (in module RegAlloc.EnterSSA)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/Lib.Statement.html#Lib.Statement.Instru3A">Instru3A (class in Lib.Statement)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/Lib.Statement.html#Lib.Statement.Instruction">Instruction (class in Lib.Statement)</a>
 </li>
       <li><a href="api/Lib.Statement.html#Lib.Statement.Instruction.is_read_only">is_read_only() (Lib.Statement.Instruction method)</a>
+
+      <ul>
+        <li><a href="api/Lib.Terminator.html#Lib.Terminator.Return.is_read_only">(Lib.Terminator.Return method)</a>
 </li>
-      <li><a href="api/Lib.LinearCode.html#Lib.LinearCode.LinearCode.iter_statements">iter_statements() (Lib.LinearCode.LinearCode method)</a>
+      </ul></li>
+      <li><a href="api/Lib.CFG.html#Lib.CFG.Block.iter_statements">iter_statements() (Lib.CFG.Block method)</a>
+
+      <ul>
+        <li><a href="api/Lib.CFG.html#Lib.CFG.CFG.iter_statements">(Lib.CFG.CFG method)</a>
 </li>
+        <li><a href="api/Lib.LinearCode.html#Lib.LinearCode.LinearCode.iter_statements">(Lib.LinearCode.LinearCode method)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -388,6 +452,10 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/Lib.RiscV.html#Lib.RiscV.jump">jump() (in module Lib.RiscV)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/Lib.Terminator.html#Lib.Terminator.jump2terminator">jump2terminator() (in module Lib.Terminator)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -403,6 +471,10 @@
         <li><a href="api/Lib.Statement.html#Lib.Statement.ConditionalJump.label">(Lib.Statement.ConditionalJump attribute)</a>
 </li>
       </ul></li>
+      <li><a href="api/Lib.Terminator.html#Lib.Terminator.BranchingTerminator.label_else">label_else (Lib.Terminator.BranchingTerminator attribute)</a>
+</li>
+      <li><a href="api/Lib.Terminator.html#Lib.Terminator.BranchingTerminator.label_then">label_then (Lib.Terminator.BranchingTerminator attribute)</a>
+</li>
       <li><a href="api/Lib.RiscV.html#Lib.RiscV.land">land() (in module Lib.RiscV)</a>
 </li>
       <li><a href="api/Lib.RiscV.html#Lib.RiscV.ld">ld() (in module Lib.RiscV)</a>
@@ -424,6 +496,13 @@
 </li>
       </ul></li>
       <li>
+    Lib.CFG
+
+      <ul>
+        <li><a href="api/Lib.CFG.html#module-Lib.CFG">module</a>
+</li>
+      </ul></li>
+      <li>
     Lib.Errors
 
       <ul>
@@ -437,6 +516,8 @@
         <li><a href="api/Lib.FunctionData.html#module-Lib.FunctionData">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     Lib.LinearCode
 
@@ -444,8 +525,6 @@
         <li><a href="api/Lib.LinearCode.html#module-Lib.LinearCode">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     Lib.Operands
 
@@ -467,9 +546,18 @@
         <li><a href="api/Lib.Statement.html#module-Lib.Statement">module</a>
 </li>
       </ul></li>
+      <li>
+    Lib.Terminator
+
+      <ul>
+        <li><a href="api/Lib.Terminator.html#module-Lib.Terminator">module</a>
+</li>
+      </ul></li>
       <li><a href="api/Lib.LinearCode.html#Lib.LinearCode.LinearCode">LinearCode (class in Lib.LinearCode)</a>
 </li>
       <li><a href="api/CodeGen.LinearizeCFG.html#CodeGen.LinearizeCFG.linearize">linearize() (in module CodeGen.LinearizeCFG)</a>
+</li>
+      <li><a href="api/Lib.CFG.html#Lib.CFG.CFG.linearize_naive">linearize_naive() (Lib.CFG.CFG method)</a>
 </li>
       <li><a href="api/RegAlloc.LivenessSSA.html#RegAlloc.LivenessSSA.LivenessSSA.livein_at_instruction">livein_at_instruction() (RegAlloc.LivenessSSA.LivenessSSA method)</a>
 </li>
@@ -519,6 +607,8 @@
 </li>
         <li><a href="api/Lib.Allocator.html#module-Lib.Allocator">Lib.Allocator</a>
 </li>
+        <li><a href="api/Lib.CFG.html#module-Lib.CFG">Lib.CFG</a>
+</li>
         <li><a href="api/Lib.Errors.html#module-Lib.Errors">Lib.Errors</a>
 </li>
         <li><a href="api/Lib.FunctionData.html#module-Lib.FunctionData">Lib.FunctionData</a>
@@ -530,6 +620,8 @@
         <li><a href="api/Lib.RiscV.html#module-Lib.RiscV">Lib.RiscV</a>
 </li>
         <li><a href="api/Lib.Statement.html#module-Lib.Statement">Lib.Statement</a>
+</li>
+        <li><a href="api/Lib.Terminator.html#module-Lib.Terminator">Lib.Terminator</a>
 </li>
         <li><a href="api/RegAlloc.html#module-RegAlloc">RegAlloc</a>
 </li>
@@ -575,14 +667,24 @@
       <li><a href="api/Lib.Operands.html#Lib.Operands.Offset">Offset (class in Lib.Operands)</a>
 </li>
       <li><a href="api/Lib.Statement.html#Lib.Statement.ConditionalJump.op1">op1 (Lib.Statement.ConditionalJump attribute)</a>
+
+      <ul>
+        <li><a href="api/Lib.Terminator.html#Lib.Terminator.BranchingTerminator.op1">(Lib.Terminator.BranchingTerminator attribute)</a>
 </li>
+      </ul></li>
+      <li><a href="api/Lib.Statement.html#Lib.Statement.ConditionalJump.op2">op2 (Lib.Statement.ConditionalJump attribute)</a>
+
+      <ul>
+        <li><a href="api/Lib.Terminator.html#Lib.Terminator.BranchingTerminator.op2">(Lib.Terminator.BranchingTerminator attribute)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/Lib.Statement.html#Lib.Statement.ConditionalJump.op2">op2 (Lib.Statement.ConditionalJump attribute)</a>
-</li>
       <li><a href="api/Lib.Operands.html#Lib.Operands.Operand">Operand (class in Lib.Operands)</a>
 </li>
       <li><a href="api/CodeGen.LinearizeCFG.html#CodeGen.LinearizeCFG.ordered_blocks_list">ordered_blocks_list() (in module CodeGen.LinearizeCFG)</a>
+</li>
+      <li><a href="api/Lib.CFG.html#Lib.CFG.CFG.out_blocks">out_blocks() (Lib.CFG.CFG method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -604,10 +706,18 @@
       </ul></li>
       <li><a href="api/CodeGen.BuildCFG.html#CodeGen.BuildCFG.prepare_chunk">prepare_chunk() (in module CodeGen.BuildCFG)</a>
 </li>
-      <li><a href="api/Lib.LinearCode.html#Lib.LinearCode.LinearCode.print_code">print_code() (Lib.LinearCode.LinearCode method)</a>
+      <li><a href="api/Lib.CFG.html#Lib.CFG.CFG.print_code">print_code() (Lib.CFG.CFG method)</a>
+
+      <ul>
+        <li><a href="api/Lib.LinearCode.html#Lib.LinearCode.LinearCode.print_code">(Lib.LinearCode.LinearCode method)</a>
 </li>
-      <li><a href="api/Lib.LinearCode.html#Lib.LinearCode.LinearCode.print_dot">print_dot() (Lib.LinearCode.LinearCode method)</a>
+      </ul></li>
+      <li><a href="api/Lib.CFG.html#Lib.CFG.CFG.print_dot">print_dot() (Lib.CFG.CFG method)</a>
+
+      <ul>
+        <li><a href="api/Lib.LinearCode.html#Lib.LinearCode.LinearCode.print_dot">(Lib.LinearCode.LinearCode method)</a>
 </li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/RegAlloc.LivenessDataFlow.html#RegAlloc.LivenessDataFlow.LivenessDataFlow.print_gen_kill">print_gen_kill() (RegAlloc.LivenessDataFlow.LivenessDataFlow method)</a>
@@ -626,6 +736,8 @@
         <li><a href="api/Lib.Statement.html#Lib.Statement.Label.printIns">(Lib.Statement.Label method)</a>
 </li>
         <li><a href="api/Lib.Statement.html#Lib.Statement.Statement.printIns">(Lib.Statement.Statement method)</a>
+</li>
+        <li><a href="api/Lib.Terminator.html#Lib.Terminator.Return.printIns">(Lib.Terminator.Return method)</a>
 </li>
       </ul></li>
       <li><a href="api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.printSymbolTable">printSymbolTable() (CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor method)</a>
@@ -693,10 +805,14 @@
 </li>
       <li><a href="api/Lib.Statement.html#Lib.Statement.regset_to_string">regset_to_string() (in module Lib.Statement)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/Lib.RiscV.html#Lib.RiscV.rem">rem() (in module Lib.RiscV)</a>
 </li>
+      <li><a href="api/Lib.CFG.html#Lib.CFG.Block.remove_all_phis">remove_all_phis() (Lib.CFG.Block method)</a>
+</li>
+      <li><a href="api/Lib.CFG.html#Lib.CFG.CFG.remove_edge">remove_edge() (Lib.CFG.CFG method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/Lib.Statement.html#Lib.Statement.AbsoluteJump.rename">rename() (Lib.Statement.AbsoluteJump method)</a>
 
       <ul>
@@ -705,6 +821,10 @@
         <li><a href="api/Lib.Statement.html#Lib.Statement.Instru3A.rename">(Lib.Statement.Instru3A method)</a>
 </li>
         <li><a href="api/Lib.Statement.html#Lib.Statement.Instruction.rename">(Lib.Statement.Instruction method)</a>
+</li>
+        <li><a href="api/Lib.Terminator.html#Lib.Terminator.BranchingTerminator.rename">(Lib.Terminator.BranchingTerminator method)</a>
+</li>
+        <li><a href="api/Lib.Terminator.html#Lib.Terminator.Return.rename">(Lib.Terminator.Return method)</a>
 </li>
       </ul></li>
       <li><a href="api/RegAlloc.EnterSSA.html#RegAlloc.EnterSSA.rename_block">rename_block() (in module RegAlloc.EnterSSA)</a>
@@ -728,6 +848,8 @@
 </li>
       </ul></li>
       <li><a href="api/CodeGen.MiniCCodeGen3AVisitor.html#CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor.restore_regs">restore_regs() (CodeGen.MiniCCodeGen3AVisitor.MiniCCodeGen3AVisitor method)</a>
+</li>
+      <li><a href="api/Lib.Terminator.html#Lib.Terminator.Return">Return (class in Lib.Terminator)</a>
 </li>
       <li><a href="api/Lib.Allocator.html#Lib.Allocator.Allocator.rewriteCode">rewriteCode() (Lib.Allocator.Allocator method)</a>
 </li>
@@ -759,7 +881,13 @@
 </li>
       <li><a href="api/RegAlloc.LivenessDataFlow.html#RegAlloc.LivenessDataFlow.LivenessDataFlow.set_gen_kill_in_block">set_gen_kill_in_block() (RegAlloc.LivenessDataFlow.LivenessDataFlow method)</a>
 </li>
+      <li><a href="api/Lib.CFG.html#Lib.CFG.Block.set_phis">set_phis() (Lib.CFG.Block method)</a>
+</li>
+      <li><a href="api/Lib.CFG.html#Lib.CFG.CFG.set_start">set_start() (Lib.CFG.CFG method)</a>
+</li>
       <li><a href="api/Lib.Operands.html#Lib.Operands.TemporaryPool.set_temp_allocation">set_temp_allocation() (Lib.Operands.TemporaryPool method)</a>
+</li>
+      <li><a href="api/Lib.CFG.html#Lib.CFG.Block.set_terminator">set_terminator() (Lib.CFG.Block method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -782,6 +910,10 @@
 </li>
         <li><a href="api/Lib.Statement.html#Lib.Statement.Statement.substitute">(Lib.Statement.Statement method)</a>
 </li>
+        <li><a href="api/Lib.Terminator.html#Lib.Terminator.BranchingTerminator.substitute">(Lib.Terminator.BranchingTerminator method)</a>
+</li>
+        <li><a href="api/Lib.Terminator.html#Lib.Terminator.Return.substitute">(Lib.Terminator.Return method)</a>
+</li>
       </ul></li>
   </ul></td>
 </tr></table>
@@ -792,12 +924,22 @@
       <li><a href="api/Lib.Operands.html#Lib.Operands.T">T (in module Lib.Operands)</a>
 </li>
       <li><a href="api/Lib.Statement.html#Lib.Statement.AbsoluteJump.targets">targets() (Lib.Statement.AbsoluteJump method)</a>
+
+      <ul>
+        <li><a href="api/Lib.Terminator.html#Lib.Terminator.BranchingTerminator.targets">(Lib.Terminator.BranchingTerminator method)</a>
 </li>
+        <li><a href="api/Lib.Terminator.html#Lib.Terminator.Return.targets">(Lib.Terminator.Return method)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/Lib.Operands.html#Lib.Operands.Temporary">Temporary (class in Lib.Operands)</a>
 </li>
       <li><a href="api/Lib.Operands.html#Lib.Operands.TemporaryPool">TemporaryPool (class in Lib.Operands)</a>
+</li>
+      <li><a href="api/Lib.Terminator.html#Lib.Terminator.Terminator">Terminator (in module Lib.Terminator)</a>
+</li>
+      <li><a href="api/Lib.CFG.html#Lib.CFG.Block.to_dot">to_dot() (Lib.CFG.Block method)</a>
 </li>
       <li><a href="api/Lib.Operands.html#Lib.Operands.TP">TP (in module Lib.Operands)</a>
 </li>
@@ -917,6 +1059,10 @@
         <li><a href="api/Lib.Statement.html#Lib.Statement.Instru3A.with_args">(Lib.Statement.Instru3A method)</a>
 </li>
         <li><a href="api/Lib.Statement.html#Lib.Statement.Statement.with_args">(Lib.Statement.Statement method)</a>
+</li>
+        <li><a href="api/Lib.Terminator.html#Lib.Terminator.BranchingTerminator.with_args">(Lib.Terminator.BranchingTerminator method)</a>
+</li>
+        <li><a href="api/Lib.Terminator.html#Lib.Terminator.Return.with_args">(Lib.Terminator.Return method)</a>
 </li>
       </ul></li>
   </ul></td>

@@ -51,6 +51,8 @@
 <li class="toctree-l1"><a class="reference internal" href="Lib.FunctionData.html">Base library - Function data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Lib.LinearCode.html">Linear intermediate representation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Lib.Allocator.html">Temporary allocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Lib.CFG.html">Control Flow Graph - CFG and Basic blocks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Lib.Terminator.html">Control Flow Graph - Terminators</a></li>
 </ul>
 
         </div>
@@ -113,7 +115,7 @@ or a jump not in last position.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="CodeGen.BuildCFG.build_cfg">
-<span class="sig-prename descclassname"><span class="pre">CodeGen.BuildCFG.</span></span><span class="sig-name descname"><span class="pre">build_cfg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">linCode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="Lib.LinearCode.html#Lib.LinearCode.LinearCode" title="Lib.LinearCode.LinearCode"><span class="pre">LinearCode</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">CFG</span></span></span><a class="reference internal" href="../_modules/CodeGen/BuildCFG.html#build_cfg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.BuildCFG.build_cfg" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">CodeGen.BuildCFG.</span></span><span class="sig-name descname"><span class="pre">build_cfg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">linCode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="Lib.LinearCode.html#Lib.LinearCode.LinearCode" title="Lib.LinearCode.LinearCode"><span class="pre">LinearCode</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="Lib.CFG.html#Lib.CFG.CFG" title="Lib.CFG.CFG"><span class="pre">CFG</span></a></span></span><a class="reference internal" href="../_modules/CodeGen/BuildCFG.html#build_cfg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#CodeGen.BuildCFG.build_cfg" title="Link to this definition"></a></dt>
 <dd><p>Extract the blocks from the linear code and add them to the CFG.</p>
 </dd></dl>
 

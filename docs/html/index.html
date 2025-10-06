@@ -52,6 +52,8 @@
 <li class="toctree-l1"><a class="reference internal" href="api/Lib.FunctionData.html">Base library - Function data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/Lib.LinearCode.html">Linear intermediate representation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/Lib.Allocator.html">Temporary allocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/Lib.CFG.html">Control Flow Graph - CFG and Basic blocks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/Lib.Terminator.html">Control Flow Graph - Terminators</a></li>
 </ul>
 
         </div>
@@ -257,6 +259,73 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="api/Lib.CFG.html">Control Flow Graph - CFG and Basic blocks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.CFG.html#Lib.CFG.Block"><code class="docutils literal notranslate"><span class="pre">Block</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.CFG.html#Lib.CFG.Block.to_dot"><code class="docutils literal notranslate"><span class="pre">Block.to_dot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.CFG.html#Lib.CFG.Block.get_body"><code class="docutils literal notranslate"><span class="pre">Block.get_body()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.CFG.html#Lib.CFG.Block.get_all_statements"><code class="docutils literal notranslate"><span class="pre">Block.get_all_statements()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.CFG.html#Lib.CFG.Block.get_body_and_terminator"><code class="docutils literal notranslate"><span class="pre">Block.get_body_and_terminator()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.CFG.html#Lib.CFG.Block.get_label"><code class="docutils literal notranslate"><span class="pre">Block.get_label()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.CFG.html#Lib.CFG.Block.get_in"><code class="docutils literal notranslate"><span class="pre">Block.get_in()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.CFG.html#Lib.CFG.Block.get_terminator"><code class="docutils literal notranslate"><span class="pre">Block.get_terminator()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.CFG.html#Lib.CFG.Block.set_terminator"><code class="docutils literal notranslate"><span class="pre">Block.set_terminator()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.CFG.html#Lib.CFG.Block.get_phis"><code class="docutils literal notranslate"><span class="pre">Block.get_phis()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.CFG.html#Lib.CFG.Block.add_phi"><code class="docutils literal notranslate"><span class="pre">Block.add_phi()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.CFG.html#Lib.CFG.Block.set_phis"><code class="docutils literal notranslate"><span class="pre">Block.set_phis()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.CFG.html#Lib.CFG.Block.remove_all_phis"><code class="docutils literal notranslate"><span class="pre">Block.remove_all_phis()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.CFG.html#Lib.CFG.Block.iter_statements"><code class="docutils literal notranslate"><span class="pre">Block.iter_statements()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.CFG.html#Lib.CFG.Block.add_instruction"><code class="docutils literal notranslate"><span class="pre">Block.add_instruction()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.CFG.html#Lib.CFG.CFG"><code class="docutils literal notranslate"><span class="pre">CFG</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.CFG.html#Lib.CFG.CFG.fdata"><code class="docutils literal notranslate"><span class="pre">CFG.fdata</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.CFG.html#Lib.CFG.CFG.get_start"><code class="docutils literal notranslate"><span class="pre">CFG.get_start()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.CFG.html#Lib.CFG.CFG.set_start"><code class="docutils literal notranslate"><span class="pre">CFG.set_start()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.CFG.html#Lib.CFG.CFG.get_end"><code class="docutils literal notranslate"><span class="pre">CFG.get_end()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.CFG.html#Lib.CFG.CFG.add_block"><code class="docutils literal notranslate"><span class="pre">CFG.add_block()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.CFG.html#Lib.CFG.CFG.get_block"><code class="docutils literal notranslate"><span class="pre">CFG.get_block()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.CFG.html#Lib.CFG.CFG.get_blocks"><code class="docutils literal notranslate"><span class="pre">CFG.get_blocks()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.CFG.html#Lib.CFG.CFG.get_entries"><code class="docutils literal notranslate"><span class="pre">CFG.get_entries()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.CFG.html#Lib.CFG.CFG.add_edge"><code class="docutils literal notranslate"><span class="pre">CFG.add_edge()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.CFG.html#Lib.CFG.CFG.remove_edge"><code class="docutils literal notranslate"><span class="pre">CFG.remove_edge()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.CFG.html#Lib.CFG.CFG.out_blocks"><code class="docutils literal notranslate"><span class="pre">CFG.out_blocks()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.CFG.html#Lib.CFG.CFG.gather_defs"><code class="docutils literal notranslate"><span class="pre">CFG.gather_defs()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.CFG.html#Lib.CFG.CFG.iter_statements"><code class="docutils literal notranslate"><span class="pre">CFG.iter_statements()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.CFG.html#Lib.CFG.CFG.linearize_naive"><code class="docutils literal notranslate"><span class="pre">CFG.linearize_naive()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.CFG.html#Lib.CFG.CFG.print_code"><code class="docutils literal notranslate"><span class="pre">CFG.print_code()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.CFG.html#Lib.CFG.CFG.print_dot"><code class="docutils literal notranslate"><span class="pre">CFG.print_dot()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/Lib.Terminator.html">Control Flow Graph - Terminators</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Terminator.html#Lib.Terminator.Return"><code class="docutils literal notranslate"><span class="pre">Return</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Terminator.html#Lib.Terminator.Return.printIns"><code class="docutils literal notranslate"><span class="pre">Return.printIns()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Terminator.html#Lib.Terminator.Return.targets"><code class="docutils literal notranslate"><span class="pre">Return.targets()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Terminator.html#Lib.Terminator.Return.args"><code class="docutils literal notranslate"><span class="pre">Return.args()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Terminator.html#Lib.Terminator.Return.rename"><code class="docutils literal notranslate"><span class="pre">Return.rename()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Terminator.html#Lib.Terminator.Return.substitute"><code class="docutils literal notranslate"><span class="pre">Return.substitute()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Terminator.html#Lib.Terminator.Return.with_args"><code class="docutils literal notranslate"><span class="pre">Return.with_args()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Terminator.html#Lib.Terminator.Return.is_read_only"><code class="docutils literal notranslate"><span class="pre">Return.is_read_only()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Terminator.html#Lib.Terminator.BranchingTerminator"><code class="docutils literal notranslate"><span class="pre">BranchingTerminator</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Terminator.html#Lib.Terminator.BranchingTerminator.cond"><code class="docutils literal notranslate"><span class="pre">BranchingTerminator.cond</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Terminator.html#Lib.Terminator.BranchingTerminator.label_then"><code class="docutils literal notranslate"><span class="pre">BranchingTerminator.label_then</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Terminator.html#Lib.Terminator.BranchingTerminator.label_else"><code class="docutils literal notranslate"><span class="pre">BranchingTerminator.label_else</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Terminator.html#Lib.Terminator.BranchingTerminator.op1"><code class="docutils literal notranslate"><span class="pre">BranchingTerminator.op1</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Terminator.html#Lib.Terminator.BranchingTerminator.op2"><code class="docutils literal notranslate"><span class="pre">BranchingTerminator.op2</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Terminator.html#Lib.Terminator.BranchingTerminator.args"><code class="docutils literal notranslate"><span class="pre">BranchingTerminator.args()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Terminator.html#Lib.Terminator.BranchingTerminator.targets"><code class="docutils literal notranslate"><span class="pre">BranchingTerminator.targets()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Terminator.html#Lib.Terminator.BranchingTerminator.rename"><code class="docutils literal notranslate"><span class="pre">BranchingTerminator.rename()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Terminator.html#Lib.Terminator.BranchingTerminator.substitute"><code class="docutils literal notranslate"><span class="pre">BranchingTerminator.substitute()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Terminator.html#Lib.Terminator.BranchingTerminator.with_args"><code class="docutils literal notranslate"><span class="pre">BranchingTerminator.with_args()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Terminator.html#Lib.Terminator.Terminator"><code class="docutils literal notranslate"><span class="pre">Terminator</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Terminator.html#Lib.Terminator.jump2terminator"><code class="docutils literal notranslate"><span class="pre">jump2terminator()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </div>
 <p>These pages document the various Python sources in the Lib/
@@ -285,8 +354,8 @@ you should understand the naive allocator in the <a class="reference internal" h
 </section>
 <section id="control-flow-graph-intermediate-representation">
 <h2>Control Flow Graph Intermediate representation<a class="headerlink" href="#control-flow-graph-intermediate-representation" title="Link to this heading"></a></h2>
-<p>The classes for the CFG and its basic blocks are in the <span class="xref std std-doc">api/Lib.CFG</span>.
-Each block ends with a terminator, as documented in the <span class="xref std std-doc">api/Lib.Terminator</span>.</p>
+<p>The classes for the CFG and its basic blocks are in the <a class="reference internal" href="api/Lib.CFG.html"><span class="doc">Lib.CFG module</span></a>.
+Each block ends with a terminator, as documented in the <a class="reference internal" href="api/Lib.Terminator.html"><span class="doc">Lib.Terminator module</span></a>.</p>
 </section>
 <section id="ssa-form">
 <h2>SSA form<a class="headerlink" href="#ssa-form" title="Link to this heading"></a></h2>
