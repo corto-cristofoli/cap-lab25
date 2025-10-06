@@ -45,3 +45,10 @@ _Academic first semester 2025-2026_
 - :book: Course: Monday 6/10/2025, 10h15-12h15. Amphi B (Gabriel Radanne)
 
   Intermediate Representation [transparents](course/cap_cours05_irs.pdf).
+
+- :hammer: Lab 4b: Tuesday 07/10/2025, 10h15-12h15. Room E001 (Emma Nardino & Léo Paviet Salomon).
+  (Second part of a two-parter lab.)
+  **Due Tuesday 14/10/2025 @ 23h59**
+
+  * TP Codegen [TP04](Codegen/tp4b.pdf)
+  * Supporting files mostly in [MiniC/Codegen](MiniC/CodeGen/)
