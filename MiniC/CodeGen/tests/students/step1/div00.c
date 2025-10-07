@@ -2,10 +2,12 @@
 
 int main() {
     
-    int x,y;
-    x=4;
-    y=12+x;
+    int a,n;
+    n=32;
+    a=10;
+    println_int(n/a);
     return 0;
 }
 
 // EXPECTED
+// 3

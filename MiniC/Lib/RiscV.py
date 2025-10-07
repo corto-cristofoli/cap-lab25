@@ -80,6 +80,12 @@ def xor(dr: RegisterLike, sr1: RegisterLike,
     else:
         return Instru3A("xor", dr, sr1, sr2orimm7)
 
+# add by myself #################################################
+def slt(dr: RegisterLike, sr1: RegisterLike,
+        sr2orimm7: RegisterLike | Immediate) -> Instru3A:
+    return Instru3A("slt", dr, sr1, sr2orimm7)
+#################################################################
+
 
 def li(dr: RegisterLike, imm7: Immediate) -> Instru3A:
     return Instru3A("li", dr, imm7)

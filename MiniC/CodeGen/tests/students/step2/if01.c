@@ -1,11 +1,11 @@
 #include "printlib.h"
 
 int main() {
-    
-    int x,y;
-    x=4;
-    y=12+x;
+    if ((3+2)<6){
+        println_int(5);
+    }
     return 0;
 }
 
 // EXPECTED
+// 5

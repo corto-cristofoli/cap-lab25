@@ -2,10 +2,11 @@
 
 int main() {
     
-    int x,y;
-    x=4;
-    y=12+x;
+    bool b;
+    b = !b;
+    println_bool(b);
     return 0;
 }
 
 // EXPECTED
+// 1
