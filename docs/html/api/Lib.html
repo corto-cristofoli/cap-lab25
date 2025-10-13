@@ -49,10 +49,13 @@
 <li class="toctree-l1"><a class="reference internal" href="Lib.RiscV.html">Base library - RISC-V instructions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Lib.Operands.html">Base library - Operands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Lib.FunctionData.html">Base library - Function data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Lib.Graphes.html">Base library - Graphs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Lib.LinearCode.html">Linear intermediate representation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Lib.Allocator.html">Temporary allocation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Lib.CFG.html">Control Flow Graph - CFG and Basic blocks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Lib.Terminator.html">Control Flow Graph - Terminators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Lib.Dominators.html">SSA form - Dominance frontier</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Lib.PhiNode.html">SSA form - Phi Nodes</a></li>
 </ul>
 
         </div>
@@ -138,6 +141,13 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="Lib.Dominators.html">Lib.Dominators module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Lib.Dominators.html#Lib.Dominators.computeDom"><code class="docutils literal notranslate"><span class="pre">computeDom()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="Lib.Dominators.html#Lib.Dominators.printDT"><code class="docutils literal notranslate"><span class="pre">printDT()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="Lib.Dominators.html#Lib.Dominators.computeDT"><code class="docutils literal notranslate"><span class="pre">computeDT()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="Lib.Dominators.html#Lib.Dominators.computeDF"><code class="docutils literal notranslate"><span class="pre">computeDF()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="Lib.Errors.html">Lib.Errors module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="Lib.Errors.html#Lib.Errors.MiniCRuntimeError"><code class="docutils literal notranslate"><span class="pre">MiniCRuntimeError</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="Lib.Errors.html#Lib.Errors.MiniCInternalError"><code class="docutils literal notranslate"><span class="pre">MiniCInternalError</span></code></a></li>
@@ -154,6 +164,44 @@
 <li class="toctree-l3"><a class="reference internal" href="Lib.FunctionData.html#Lib.FunctionData.FunctionData.get_offset"><code class="docutils literal notranslate"><span class="pre">FunctionData.get_offset()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="Lib.FunctionData.html#Lib.FunctionData.FunctionData.fresh_label"><code class="docutils literal notranslate"><span class="pre">FunctionData.fresh_label()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="Lib.FunctionData.html#Lib.FunctionData.FunctionData.get_label_div_by_zero"><code class="docutils literal notranslate"><span class="pre">FunctionData.get_label_div_by_zero()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Lib.Graphes.html">Lib.Graphes module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Lib.Graphes.html#Lib.Graphes.GraphError"><code class="docutils literal notranslate"><span class="pre">GraphError</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Lib.Graphes.html#Lib.Graphes.GraphError.message"><code class="docutils literal notranslate"><span class="pre">GraphError.message</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Lib.Graphes.html#Lib.Graphes.GeneralGraph"><code class="docutils literal notranslate"><span class="pre">GeneralGraph</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Lib.Graphes.html#Lib.Graphes.GeneralGraph.graph_dict"><code class="docutils literal notranslate"><span class="pre">GeneralGraph.graph_dict</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="Lib.Graphes.html#Lib.Graphes.GeneralGraph.vertices"><code class="docutils literal notranslate"><span class="pre">GeneralGraph.vertices()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="Lib.Graphes.html#Lib.Graphes.GeneralGraph.add_vertex"><code class="docutils literal notranslate"><span class="pre">GeneralGraph.add_vertex()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="Lib.Graphes.html#Lib.Graphes.GeneralGraph.edges"><code class="docutils literal notranslate"><span class="pre">GeneralGraph.edges()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="Lib.Graphes.html#Lib.Graphes.GeneralGraph.dfs_traversal"><code class="docutils literal notranslate"><span class="pre">GeneralGraph.dfs_traversal()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="Lib.Graphes.html#Lib.Graphes.GeneralGraph.is_reachable_from"><code class="docutils literal notranslate"><span class="pre">GeneralGraph.is_reachable_from()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="Lib.Graphes.html#Lib.Graphes.GeneralGraph.connected_components"><code class="docutils literal notranslate"><span class="pre">GeneralGraph.connected_components()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="Lib.Graphes.html#Lib.Graphes.GeneralGraph.bfs_traversal"><code class="docutils literal notranslate"><span class="pre">GeneralGraph.bfs_traversal()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Lib.Graphes.html#Lib.Graphes.Graph"><code class="docutils literal notranslate"><span class="pre">Graph</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Lib.Graphes.html#Lib.Graphes.Graph.edges"><code class="docutils literal notranslate"><span class="pre">Graph.edges()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="Lib.Graphes.html#Lib.Graphes.Graph.add_edge"><code class="docutils literal notranslate"><span class="pre">Graph.add_edge()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="Lib.Graphes.html#Lib.Graphes.Graph.print_dot"><code class="docutils literal notranslate"><span class="pre">Graph.print_dot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="Lib.Graphes.html#Lib.Graphes.Graph.delete_vertex"><code class="docutils literal notranslate"><span class="pre">Graph.delete_vertex()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="Lib.Graphes.html#Lib.Graphes.Graph.delete_edge"><code class="docutils literal notranslate"><span class="pre">Graph.delete_edge()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="Lib.Graphes.html#Lib.Graphes.Graph.color"><code class="docutils literal notranslate"><span class="pre">Graph.color()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="Lib.Graphes.html#Lib.Graphes.Graph.color_with_k_colors"><code class="docutils literal notranslate"><span class="pre">Graph.color_with_k_colors()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Lib.Graphes.html#Lib.Graphes.DiGraph"><code class="docutils literal notranslate"><span class="pre">DiGraph</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Lib.Graphes.html#Lib.Graphes.DiGraph.pred"><code class="docutils literal notranslate"><span class="pre">DiGraph.pred()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="Lib.Graphes.html#Lib.Graphes.DiGraph.neighbourhoods"><code class="docutils literal notranslate"><span class="pre">DiGraph.neighbourhoods()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="Lib.Graphes.html#Lib.Graphes.DiGraph.edges"><code class="docutils literal notranslate"><span class="pre">DiGraph.edges()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="Lib.Graphes.html#Lib.Graphes.DiGraph.add_edge"><code class="docutils literal notranslate"><span class="pre">DiGraph.add_edge()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="Lib.Graphes.html#Lib.Graphes.DiGraph.print_dot"><code class="docutils literal notranslate"><span class="pre">DiGraph.print_dot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="Lib.Graphes.html#Lib.Graphes.DiGraph.delete_vertex"><code class="docutils literal notranslate"><span class="pre">DiGraph.delete_vertex()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="Lib.Graphes.html#Lib.Graphes.DiGraph.delete_edge"><code class="docutils literal notranslate"><span class="pre">DiGraph.delete_edge()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -216,6 +264,20 @@
 <li class="toctree-l3"><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Renamer.replace"><code class="docutils literal notranslate"><span class="pre">Renamer.replace()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Renamer.defined"><code class="docutils literal notranslate"><span class="pre">Renamer.defined()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Renamer.copy"><code class="docutils literal notranslate"><span class="pre">Renamer.copy()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Lib.PhiNode.html">Lib.PhiNode module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Lib.PhiNode.html#Lib.PhiNode.PhiNode"><code class="docutils literal notranslate"><span class="pre">PhiNode</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Lib.PhiNode.html#Lib.PhiNode.PhiNode.var"><code class="docutils literal notranslate"><span class="pre">PhiNode.var</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="Lib.PhiNode.html#Lib.PhiNode.PhiNode.srcs"><code class="docutils literal notranslate"><span class="pre">PhiNode.srcs</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="Lib.PhiNode.html#Lib.PhiNode.PhiNode.defined"><code class="docutils literal notranslate"><span class="pre">PhiNode.defined()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="Lib.PhiNode.html#Lib.PhiNode.PhiNode.get_srcs"><code class="docutils literal notranslate"><span class="pre">PhiNode.get_srcs()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="Lib.PhiNode.html#Lib.PhiNode.PhiNode.used"><code class="docutils literal notranslate"><span class="pre">PhiNode.used()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="Lib.PhiNode.html#Lib.PhiNode.PhiNode.rename"><code class="docutils literal notranslate"><span class="pre">PhiNode.rename()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="Lib.PhiNode.html#Lib.PhiNode.PhiNode.rename_from"><code class="docutils literal notranslate"><span class="pre">PhiNode.rename_from()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="Lib.PhiNode.html#Lib.PhiNode.PhiNode.printIns"><code class="docutils literal notranslate"><span class="pre">PhiNode.printIns()</span></code></a></li>
 </ul>
 </li>
 </ul>

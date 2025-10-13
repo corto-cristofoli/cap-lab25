@@ -50,10 +50,13 @@
 <li class="toctree-l1"><a class="reference internal" href="api/Lib.RiscV.html">Base library - RISC-V instructions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/Lib.Operands.html">Base library - Operands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/Lib.FunctionData.html">Base library - Function data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/Lib.Graphes.html">Base library - Graphs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/Lib.LinearCode.html">Linear intermediate representation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/Lib.Allocator.html">Temporary allocation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/Lib.CFG.html">Control Flow Graph - CFG and Basic blocks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/Lib.Terminator.html">Control Flow Graph - Terminators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/Lib.Dominators.html">SSA form - Dominance frontier</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/Lib.PhiNode.html">SSA form - Phi Nodes</a></li>
 </ul>
 
         </div>
@@ -231,6 +234,44 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="api/Lib.Graphes.html">Base library - Graphs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Graphes.html#Lib.Graphes.GraphError"><code class="docutils literal notranslate"><span class="pre">GraphError</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Graphes.html#Lib.Graphes.GraphError.message"><code class="docutils literal notranslate"><span class="pre">GraphError.message</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Graphes.html#Lib.Graphes.GeneralGraph"><code class="docutils literal notranslate"><span class="pre">GeneralGraph</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Graphes.html#Lib.Graphes.GeneralGraph.graph_dict"><code class="docutils literal notranslate"><span class="pre">GeneralGraph.graph_dict</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Graphes.html#Lib.Graphes.GeneralGraph.vertices"><code class="docutils literal notranslate"><span class="pre">GeneralGraph.vertices()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Graphes.html#Lib.Graphes.GeneralGraph.add_vertex"><code class="docutils literal notranslate"><span class="pre">GeneralGraph.add_vertex()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Graphes.html#Lib.Graphes.GeneralGraph.edges"><code class="docutils literal notranslate"><span class="pre">GeneralGraph.edges()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Graphes.html#Lib.Graphes.GeneralGraph.dfs_traversal"><code class="docutils literal notranslate"><span class="pre">GeneralGraph.dfs_traversal()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Graphes.html#Lib.Graphes.GeneralGraph.is_reachable_from"><code class="docutils literal notranslate"><span class="pre">GeneralGraph.is_reachable_from()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Graphes.html#Lib.Graphes.GeneralGraph.connected_components"><code class="docutils literal notranslate"><span class="pre">GeneralGraph.connected_components()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Graphes.html#Lib.Graphes.GeneralGraph.bfs_traversal"><code class="docutils literal notranslate"><span class="pre">GeneralGraph.bfs_traversal()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Graphes.html#Lib.Graphes.Graph"><code class="docutils literal notranslate"><span class="pre">Graph</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Graphes.html#Lib.Graphes.Graph.edges"><code class="docutils literal notranslate"><span class="pre">Graph.edges()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Graphes.html#Lib.Graphes.Graph.add_edge"><code class="docutils literal notranslate"><span class="pre">Graph.add_edge()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Graphes.html#Lib.Graphes.Graph.print_dot"><code class="docutils literal notranslate"><span class="pre">Graph.print_dot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Graphes.html#Lib.Graphes.Graph.delete_vertex"><code class="docutils literal notranslate"><span class="pre">Graph.delete_vertex()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Graphes.html#Lib.Graphes.Graph.delete_edge"><code class="docutils literal notranslate"><span class="pre">Graph.delete_edge()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Graphes.html#Lib.Graphes.Graph.color"><code class="docutils literal notranslate"><span class="pre">Graph.color()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Graphes.html#Lib.Graphes.Graph.color_with_k_colors"><code class="docutils literal notranslate"><span class="pre">Graph.color_with_k_colors()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Graphes.html#Lib.Graphes.DiGraph"><code class="docutils literal notranslate"><span class="pre">DiGraph</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Graphes.html#Lib.Graphes.DiGraph.pred"><code class="docutils literal notranslate"><span class="pre">DiGraph.pred()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Graphes.html#Lib.Graphes.DiGraph.neighbourhoods"><code class="docutils literal notranslate"><span class="pre">DiGraph.neighbourhoods()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Graphes.html#Lib.Graphes.DiGraph.edges"><code class="docutils literal notranslate"><span class="pre">DiGraph.edges()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Graphes.html#Lib.Graphes.DiGraph.add_edge"><code class="docutils literal notranslate"><span class="pre">DiGraph.add_edge()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Graphes.html#Lib.Graphes.DiGraph.print_dot"><code class="docutils literal notranslate"><span class="pre">DiGraph.print_dot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Graphes.html#Lib.Graphes.DiGraph.delete_vertex"><code class="docutils literal notranslate"><span class="pre">DiGraph.delete_vertex()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.Graphes.html#Lib.Graphes.DiGraph.delete_edge"><code class="docutils literal notranslate"><span class="pre">DiGraph.delete_edge()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="api/Lib.LinearCode.html">Linear intermediate representation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="api/Lib.LinearCode.html#Lib.LinearCode.LinearCode"><code class="docutils literal notranslate"><span class="pre">LinearCode</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="api/Lib.LinearCode.html#Lib.LinearCode.LinearCode.fdata"><code class="docutils literal notranslate"><span class="pre">LinearCode.fdata</span></code></a></li>
@@ -326,6 +367,27 @@
 <li class="toctree-l2"><a class="reference internal" href="api/Lib.Terminator.html#Lib.Terminator.jump2terminator"><code class="docutils literal notranslate"><span class="pre">jump2terminator()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="api/Lib.Dominators.html">SSA form - Dominance frontier</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Dominators.html#Lib.Dominators.computeDom"><code class="docutils literal notranslate"><span class="pre">computeDom()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Dominators.html#Lib.Dominators.printDT"><code class="docutils literal notranslate"><span class="pre">printDT()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Dominators.html#Lib.Dominators.computeDT"><code class="docutils literal notranslate"><span class="pre">computeDT()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.Dominators.html#Lib.Dominators.computeDF"><code class="docutils literal notranslate"><span class="pre">computeDF()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/Lib.PhiNode.html">SSA form - Phi Nodes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/Lib.PhiNode.html#Lib.PhiNode.PhiNode"><code class="docutils literal notranslate"><span class="pre">PhiNode</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.PhiNode.html#Lib.PhiNode.PhiNode.var"><code class="docutils literal notranslate"><span class="pre">PhiNode.var</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.PhiNode.html#Lib.PhiNode.PhiNode.srcs"><code class="docutils literal notranslate"><span class="pre">PhiNode.srcs</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.PhiNode.html#Lib.PhiNode.PhiNode.defined"><code class="docutils literal notranslate"><span class="pre">PhiNode.defined()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.PhiNode.html#Lib.PhiNode.PhiNode.get_srcs"><code class="docutils literal notranslate"><span class="pre">PhiNode.get_srcs()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.PhiNode.html#Lib.PhiNode.PhiNode.used"><code class="docutils literal notranslate"><span class="pre">PhiNode.used()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.PhiNode.html#Lib.PhiNode.PhiNode.rename"><code class="docutils literal notranslate"><span class="pre">PhiNode.rename()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.PhiNode.html#Lib.PhiNode.PhiNode.rename_from"><code class="docutils literal notranslate"><span class="pre">PhiNode.rename_from()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/Lib.PhiNode.html#Lib.PhiNode.PhiNode.printIns"><code class="docutils literal notranslate"><span class="pre">PhiNode.printIns()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </div>
 <p>These pages document the various Python sources in the Lib/
@@ -340,7 +402,7 @@ and pseudo-instructions, we give you the <a class="reference internal" href="api
 <p>RISC-V instructions take arguments of various kinds,
 as defined in the <a class="reference internal" href="api/Lib.Operands.html"><span class="doc">Lib.Operands module</span></a>.</p>
 <p>At some point, we will need some basic functions about oriented and non oriented graphs,
-those are present in <span class="xref std std-doc">api/Lib.Graphes</span>.</p>
+those are present in <a class="reference internal" href="api/Lib.Graphes.html"><span class="doc">Lib.Graphes module</span></a>.</p>
 </section>
 <section id="linear-intermediate-representation">
 <h2>Linear Intermediate representation<a class="headerlink" href="#linear-intermediate-representation" title="Link to this heading"></a></h2>
@@ -360,9 +422,9 @@ Each block ends with a terminator, as documented in the <a class="reference inte
 <section id="ssa-form">
 <h2>SSA form<a class="headerlink" href="#ssa-form" title="Link to this heading"></a></h2>
 <p>The translation of the CFG into SSA form makes use of dominance frontiers.
-Functions to work with dominance are defined in the <span class="xref std std-doc">api/Lib.Dominators</span>.</p>
+Functions to work with dominance are defined in the <a class="reference internal" href="api/Lib.Dominators.html"><span class="doc">Lib.Dominators module</span></a>.</p>
 <p>Phi nodes, a special kind of statement that appears in CFGs in SSA form,
-are defined in the <span class="xref std std-doc">api/Lib.PhiNode</span>.</p>
+are defined in the <a class="reference internal" href="api/Lib.PhiNode.html"><span class="doc">Lib.PhiNode module</span></a>.</p>
 </section>
 </section>
 <section id="indices-and-tables">

@@ -49,10 +49,13 @@
 <li class="toctree-l1"><a class="reference internal" href="Lib.RiscV.html">Base library - RISC-V instructions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Lib.Operands.html">Base library - Operands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Lib.FunctionData.html">Base library - Function data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Lib.Graphes.html">Base library - Graphs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Lib.LinearCode.html">Linear intermediate representation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Lib.Allocator.html">Temporary allocation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Lib.CFG.html">Control Flow Graph - CFG and Basic blocks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Lib.Terminator.html">Control Flow Graph - Terminators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Lib.Dominators.html">SSA form - Dominance frontier</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Lib.PhiNode.html">SSA form - Phi Nodes</a></li>
 </ul>
 
         </div>
@@ -126,6 +129,13 @@
 <li class="toctree-l4"><a class="reference internal" href="Lib.CFG.html#Lib.CFG.CFG"><code class="docutils literal notranslate"><span class="pre">CFG</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="Lib.Dominators.html">Lib.Dominators module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="Lib.Dominators.html#Lib.Dominators.computeDom"><code class="docutils literal notranslate"><span class="pre">computeDom()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="Lib.Dominators.html#Lib.Dominators.printDT"><code class="docutils literal notranslate"><span class="pre">printDT()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="Lib.Dominators.html#Lib.Dominators.computeDT"><code class="docutils literal notranslate"><span class="pre">computeDT()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="Lib.Dominators.html#Lib.Dominators.computeDF"><code class="docutils literal notranslate"><span class="pre">computeDF()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="Lib.Errors.html">Lib.Errors module</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="Lib.Errors.html#Lib.Errors.MiniCRuntimeError"><code class="docutils literal notranslate"><span class="pre">MiniCRuntimeError</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="Lib.Errors.html#Lib.Errors.MiniCInternalError"><code class="docutils literal notranslate"><span class="pre">MiniCInternalError</span></code></a></li>
@@ -136,6 +146,13 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="Lib.FunctionData.html">Lib.FunctionData module</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="Lib.FunctionData.html#Lib.FunctionData.FunctionData"><code class="docutils literal notranslate"><span class="pre">FunctionData</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="Lib.Graphes.html">Lib.Graphes module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="Lib.Graphes.html#Lib.Graphes.GraphError"><code class="docutils literal notranslate"><span class="pre">GraphError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="Lib.Graphes.html#Lib.Graphes.GeneralGraph"><code class="docutils literal notranslate"><span class="pre">GeneralGraph</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="Lib.Graphes.html#Lib.Graphes.Graph"><code class="docutils literal notranslate"><span class="pre">Graph</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="Lib.Graphes.html#Lib.Graphes.DiGraph"><code class="docutils literal notranslate"><span class="pre">DiGraph</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="Lib.LinearCode.html">Lib.LinearCode module</a><ul>
@@ -166,6 +183,10 @@
 <li class="toctree-l4"><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Temporary"><code class="docutils literal notranslate"><span class="pre">Temporary</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="Lib.Operands.html#Lib.Operands.TemporaryPool"><code class="docutils literal notranslate"><span class="pre">TemporaryPool</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="Lib.Operands.html#Lib.Operands.Renamer"><code class="docutils literal notranslate"><span class="pre">Renamer</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="Lib.PhiNode.html">Lib.PhiNode module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="Lib.PhiNode.html#Lib.PhiNode.PhiNode"><code class="docutils literal notranslate"><span class="pre">PhiNode</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="Lib.RiscV.html">Lib.RiscV module</a><ul>
