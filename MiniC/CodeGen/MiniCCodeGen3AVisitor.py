@@ -152,7 +152,7 @@ class MiniCCodeGen3AVisitor(MiniCVisitor):
             print(Trees.toStringTree(ctx, [], self._parser))
             print("Condition:", c)
         # raise NotImplementedError()
-        ONE = Operands.Immediate(1)  # NOTE: should be 1
+        ONE = Operands.Immediate(1)
         relation = ctx.myop.type
         dest_temp = self.fresh_tmp()
         tmpl = self.visit(ctx.expr(0))
@@ -191,7 +191,6 @@ class MiniCCodeGen3AVisitor(MiniCVisitor):
         return dest_temp
 
     def visitMultiplicativeExpr(self, ctx) -> Operands.Temporary:
-        # TODO: verify / and % match C operations
         assert ctx.myop is not None
         div_by_zero_lbl = self.get_label_div_by_zero()
         tmpl: Operands.Temporary = self.visit(ctx.expr(0))
@@ -226,7 +225,10 @@ class MiniCCodeGen3AVisitor(MiniCVisitor):
         return dest_temp
 
     def visitUnaryMinusExpr(self, ctx) -> Operands.Temporary:
-        raise NotImplementedError("unaryminusexpr")  # TODO
+        tmp: Operands.Temporary = self.visit(ctx.expr())
+        dest_temp = self.fresh_tmp()
+        self.add_statement(RiscV.sub(dest_temp, Operands.ZERO, tmp))
+        return dest_temp
 
     def visitProgRule(self, ctx) -> None:
         self.visitChildren(ctx)
@@ -271,24 +273,39 @@ class MiniCCodeGen3AVisitor(MiniCVisitor):
         self.add_statement(RiscV.mv(self._symbol_table[name], expr_temp))
 
     def visitIfStat(self, ctx) -> None:
-        ONE = Operands.Immediate(1)
         if self._debug:
-            print("if statement")
+            print("if statement, condition is:")
+            print(Trees.toStringTree(ctx.expr(), [], self._parser))
+            print("and block is:")
+            try:
+                print(Trees.toStringTree(ctx.stat_block(0), [], self._parser))
+            except AttributeError:
+                print(Trees.toStringTree(ctx.stat_block(0), [], self._parser))
+                print(Trees.toStringTree(ctx.stat_block(1), [], self._parser))
+
         end_if_label = self.fresh_label("end_if")
-        raise NotImplementedError()
+        end_else_label = self.fresh_label("end_else")
+        # raise NotImplementedError()
         cond_tmp = self.visit(ctx.expr())
-        # else_label = self._current_function.fdata.fresh_label("else")
-        self.add_statement( # TODO : on saute si c'est pas le bon label
+        # NOTE: if the condition is false we jump directly at the end of the if.
+        # we may have an else or not...
+        self.add_statement(
                 RiscV.conditional_jump(end_if_label,
                                        cond_tmp,
                                        Condition('beq'),
-                                       ONE)
+                                       Operands.ZERO)
                 )
-        # TODO : gérer le cas du else
-        self.visit(ctx.stat_block())
-        # self._current_function.add_label(else_label)
-        # self.visit(ctx.stat_block(1))
-        self.add_statement(end_if_label)
+        # if alone case
+        if ctx.else_block is None:
+            self.visit(ctx.stat_block(0))
+            self.add_statement(end_if_label)
+        # if else case
+        else:
+            self.visit(ctx.stat_block(0))
+            self.add_statement(RiscV.jump(end_else_label))
+            self.add_statement(end_if_label)
+            self.visit(ctx.stat_block(1))
+            self.add_statement(end_else_label)
 
     def visitWhileStat(self, ctx) -> None:
         if self._debug:
@@ -296,9 +313,25 @@ class MiniCCodeGen3AVisitor(MiniCVisitor):
             print(Trees.toStringTree(ctx.expr(), [], self._parser))
             print("and block is:")
             print(Trees.toStringTree(ctx.stat_block(), [], self._parser))
-        raise NotImplementedError()  # TODO
-    # visit statements
+        # raise NotImplementedError()  # TODO:
+        while_start_label = self.fresh_label("while_start")
+        while_end_label = self.fresh_label("while_end")
 
+        self.add_statement(while_start_label)
+        cond_tmp = self.visit(ctx.expr())
+        # if the condition isn't verified we directly jump to the end of loop
+        self.add_statement(
+                RiscV.conditional_jump(while_end_label,
+                                       cond_tmp,
+                                       Condition('beq'),
+                                       Operands.ZERO)
+                )
+        self.visit(ctx.stat_block())
+        # we go to start to test the condition
+        self.add_statement(RiscV.jump(while_start_label))
+        self.add_statement(while_end_label)
+
+    # visit statements
     def visitPrintlnintStat(self, ctx) -> None:
         expr_loc = self.visit(ctx.expr())
         if self._debug:

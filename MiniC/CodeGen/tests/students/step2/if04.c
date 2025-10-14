@@ -1,14 +1,13 @@
 #include "printlib.h"
 
 int main() {
-    if (true){
+    if (3+4<7){
         println_int(5);
-    }
-    if (false){
+    } else {
         println_int(3);
     }
     return 0;
 }
 
 // EXPECTED
-// 5
+// 3

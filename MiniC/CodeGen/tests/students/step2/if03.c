@@ -1,10 +1,9 @@
 #include "printlib.h"
 
 int main() {
-    if (true){
+    if (!false){
         println_int(5);
-    }
-    if (false){
+    } else {
         println_int(3);
     }
     return 0;
