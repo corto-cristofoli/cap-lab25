@@ -64,3 +64,10 @@ _Academic first semester 2025-2026_
 
   * TP RegAlloc [TP05](RegAlloc/tp5a.pdf)
   * Supporting files mostly in [MiniC/RegAlloc](MiniC/RegAlloc/)
+
+- :hammer: Lab 5b: Tuesday 21/10/2025, 10h15-12h15. Room E001 (Emma Nardino & Léo Paviet Salomon).
+  (Second part of a two-parter lab.)
+  **Due Tuesday 04/11/2025 @ 23h59** (after the holidays)
+
+  * TP RegAlloc [TP05](RegAlloc/tp5b.pdf)
+  * Supporting files mostly in [MiniC/RegAlloc](MiniC/RegAlloc/)
