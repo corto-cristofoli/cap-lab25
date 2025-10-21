@@ -38,8 +38,8 @@ stat_block: OBRACE block CBRACE
 
 while_stat: WHILE OPAR expr CPAR body=stat_block #whileStat;
 
-for_stat: FOR start=assignment TO end=expr BY step=expr body=stat_block #forStat;
-// NOTE: it seems that this loop may creates an error because it is not a C loop
+for_stat:
+    FOR OPAR (init_assign=assignment)? SCOL (cond=expr)? SCOL (loop_assign=assignment)? CPAR body=stat_block #forStat;
 
 print_stat
     : PRINTLN_INT OPAR expr CPAR SCOL         #printlnintStat

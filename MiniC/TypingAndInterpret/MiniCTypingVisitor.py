@@ -215,14 +215,15 @@ class MiniCTypingVisitor(MiniCVisitor):
         self.visit(ctx.stat_block())
 
     def visitForStat(self, ctx):
-        self.visit(ctx.assignment())
-        bound_type = self.visit(ctx.expr(0))
-        if bound_type not in {BaseType.Integer, BaseType.Float}:
-            self._raise(ctx, 'for bound', bound_type)
-        stride_type = self.visit(ctx.expr(1))
-        if stride_type != BaseType.Integer:
-            self._raise(ctx, 'for stride', stride_type)
-        self.visit(ctx.stat_block())
+        if ctx.init_assign is not None:
+            self.visit(ctx.init_assign)
+        if ctx.cond is not None:
+            cond_type = self.visit(ctx.cond)
+            if cond_type != BaseType.Boolean:
+                self._raise(ctx, "condition statement", cond_type)
+        if ctx.loop_assign is not None:
+            self.visit(ctx.loop_assign)
+        self.visit(ctx.body)
 
     def visitIfStat(self, ctx):
         condition_type = self.visit(ctx.expr())

@@ -20,9 +20,28 @@ def find_leaders(instructions: List[CodeStatement]) -> List[int]:
     last is len(instructions)
     """
     leaders: List[int] = [0]
-    # TODO fill leaders
+
+    jump_flag: bool = False  # to check wether there was a jump before or not
+    for i, instruction in enumerate(instructions):
+        match instruction:
+            case Label():
+                leaders.append(i)
+            case ConditionalJump() | AbsoluteJump():
+                if jump_flag:
+                    leaders.append(i)
+                jump_flag = True
+            case Instru3A():
+                if jump_flag:
+                    leaders.append(i)
+                    jump_flag = False
+            case Comment():
+                if jump_flag:
+                    leaders.append(i)
+                    jump_flag = False
+
     # The final "ret" is also a form of jump
     leaders.append(len(instructions))
+    print(leaders)
     return leaders
 
 
@@ -60,13 +79,26 @@ def prepare_chunk(pre_chunk: List[CodeStatement], fdata: FunctionData) -> tuple[
     Raise an error if there is a label not in first position in pre_chunk,
     or a jump not in last position.
     """
-    label = None
+    label: Label = fdata.fresh_label(f"{fdata.get_name()}")
     jump = None
     inner_statements: List[CodeStatement] = pre_chunk
-    # Extract the first instruction from inner_statements if it is a label, or create a fresh one
-    raise NotImplementedError() # TODO
-    # Extract the last instruction from inner_statements if it is a jump, or do nothing
-    raise NotImplementedError() # TODO
+
+    # Extract the first instruction from inner_statements if it is a label,
+    # or create a fresh one
+    if type(inner_statements[0]) is Label:
+        label = inner_statements[0]
+        inner_statements.pop(0)
+
+    # Extract the last instruction from inner_statements if it is a jump,
+    # or do nothing
+    if inner_statements:  # first check it is not empty
+        match inner_statements[-1]:
+            case AbsoluteJump() | ConditionalJump():
+                jump = inner_statements[-1]
+                inner_statements.pop()
+            case Label() | Comment() | Instru3A():
+                pass
+
     # Check that there is no other label or jump left in inner_statements
     l: List[BlockInstr] = []
     for i in inner_statements:

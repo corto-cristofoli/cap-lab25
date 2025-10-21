@@ -152,6 +152,7 @@ class MiniCCodeGen3AVisitor(MiniCVisitor):
             print(Trees.toStringTree(ctx, [], self._parser))
             print("Condition:", c)
         # raise NotImplementedError()
+        ZERO = Operands.Immediate(0)
         ONE = Operands.Immediate(1)
         relation = ctx.myop.type
         dest_temp = self.fresh_tmp()
@@ -169,25 +170,40 @@ class MiniCCodeGen3AVisitor(MiniCVisitor):
                    RiscV.land(dest_temp, dest_temp, ONE))
             self.add_statement(
                     RiscV.xor(dest_temp, dest_temp, ONE))
-        # HACK: I added slt into lib/RiscV
-        elif relation == MiniCParser.LTEQ:  # x<=y  <=>  (x>y)^1
-            self.add_statement(
-                    RiscV.slt(dest_temp, tmpr, tmpl))
-            self.add_statement(
-                    RiscV.xor(dest_temp, dest_temp, ONE))
-        elif relation == MiniCParser.GTEQ:  # x>=y  <=>  (x<y)^1
-            self.add_statement(
-                    RiscV.slt(dest_temp, tmpl, tmpr))
-            self.add_statement(
-                    RiscV.xor(dest_temp, dest_temp, ONE))
-        elif relation == MiniCParser.LT:
-            self.add_statement(
-                    RiscV.slt(dest_temp, tmpl, tmpr))
-        elif relation == MiniCParser.GT:
-            self.add_statement(
-                    RiscV.slt(dest_temp, tmpr, tmpl))
         else:
-            raise MiniCInternalError("relational expression")
+            # for the NEQ and EQ, no need to use label and jump
+            self.add_statement(
+                    RiscV.li(dest_temp, ONE))
+            end_rel_label = self.fresh_label("end_rel")
+            self.add_statement(
+                    RiscV.conditional_jump(end_rel_label, tmpl,
+                                           Condition(ctx.myop.type),
+                                           tmpr)
+                    )
+            self.add_statement(
+                    RiscV.li(dest_temp, ZERO))
+            self.add_statement(end_rel_label)
+
+        # # I added slt into lib/RiscV but apparently it is not allowed
+        #
+        # elif relation == MiniCParser.LTEQ:  # x<=y  <=>  (x>y)^1
+        #     self.add_statement(
+        #             RiscV.slt(dest_temp, tmpr, tmpl))
+        #     self.add_statement(
+        #             RiscV.xor(dest_temp, dest_temp, ONE))
+        # elif relation == MiniCParser.GTEQ:  # x>=y  <=>  (x<y)^1
+        #     self.add_statement(
+        #             RiscV.slt(dest_temp, tmpl, tmpr))
+        #     self.add_statement(
+        #             RiscV.xor(dest_temp, dest_temp, ONE))
+        # elif relation == MiniCParser.LT:
+        #     self.add_statement(
+        #             RiscV.slt(dest_temp, tmpl, tmpr))
+        # elif relation == MiniCParser.GT:
+        #     self.add_statement(
+        #             RiscV.slt(dest_temp, tmpr, tmpl))
+        # else:
+        #     raise MiniCInternalError("relational expression")
         return dest_temp
 
     def visitMultiplicativeExpr(self, ctx) -> Operands.Temporary:
@@ -353,3 +369,23 @@ class MiniCCodeGen3AVisitor(MiniCVisitor):
         for stat in ctx.stat():
             self.add_comment(Trees.toStringTree(stat, [], self._parser))
             self.visit(stat)
+
+    def visitForStat(self, ctx):
+        if ctx.init_assign is not None:
+            self.visit(ctx.init_assign)
+        end_for_label = self.fresh_label("end_for")
+        for_label = self.fresh_label("start_for")
+        self.add_statement(for_label)
+        if ctx.cond is not None:
+            cond_temp = self.visit(ctx.expr())
+        else:
+            cond_temp = self.fresh_tmp()
+            self.add_statement(RiscV.li(cond_temp, Operands.Immediate(1)))
+        self.add_statement(RiscV.conditional_jump(
+                end_for_label, cond_temp, Condition("beq"), Operands.ZERO
+            ))
+        self.visit(ctx.body)
+        if ctx.loop_assign is not None:
+            self.visit(ctx.loop_assign)
+        self.add_statement(RiscV.jump(for_label))
+        self.add_statement(end_for_label)

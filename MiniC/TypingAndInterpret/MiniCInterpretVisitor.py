@@ -206,27 +206,14 @@ class MiniCInterpretVisitor(MiniCVisitor):
             b_val = self.visit(ctx.expr())
 
     def visitForStat(self, ctx) -> None:
-        self.visit(ctx.assignment())
-        val = int(ctx.start.expr().getText())
-        loop_id = ctx.start.ID().getText()
-        bound_val = self.visit(ctx.expr(0))
-        step = self.visit(ctx.expr(1))
-        if bound_val < val:
-            bound_val -= 2  # just to use python for loop correctly
-        for i in range(val, bound_val+1, step):
-            self._memory[loop_id] = i
-            self.visit(ctx.stat_block())
-    # def visitForStat(self, ctx) -> None:
-    #     self.visit(ctx.assignment(0))
-    #     val = int(ctx.start.expr().getText())
-    #     loop_id = ctx.start.ID().getText()
-    #     bound_val = self.visit(ctx.expr())
-    #     if ctx.step.ID().getText() != loop_id:
-    #         raise MiniCRuntimeError()
-    #
-    #     while bound_val:
-    #         self._memory[loop_id] = i
-    #         self.visit(ctx.stat_block())
+        if ctx.init_assign is not None:
+            self.visit(ctx.init_assign)
+        cond: int = self.visit(ctx.cond) if ctx.cond is not None else 1
+        while cond:
+            self.visit(ctx.body)
+            if ctx.loop_assign is not None:
+                self.visit(ctx.loop_assign)
+            cond: int = self.visit(ctx.cond) if ctx.cond is not None else 1
 
     # TOPLEVEL
     def visitProgRule(self, ctx) -> None:
@@ -245,7 +232,9 @@ class MiniCInterpretVisitor(MiniCVisitor):
             self.visit(ctx.vardecl_l())
             self.visit(ctx.block())
         else:
-            raise MiniCUnsupportedError("Functions are not supported in evaluation mode")
+            raise MiniCUnsupportedError(
+                "Functions are not supported in evaluation mode")
 
     def visitFuncCall(self, ctx) -> None:  # pragma: no cover
-        raise MiniCUnsupportedError("Functions are not supported in evaluation mode")
+        raise MiniCUnsupportedError(
+            "Functions are not supported in evaluation mode")
