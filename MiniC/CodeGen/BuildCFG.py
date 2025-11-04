@@ -41,7 +41,7 @@ def find_leaders(instructions: List[CodeStatement]) -> List[int]:
 
     # The final "ret" is also a form of jump
     leaders.append(len(instructions))
-    print(leaders)
+    # print(leaders)
     return leaders
 
 

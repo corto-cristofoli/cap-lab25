@@ -70,7 +70,15 @@ class SmartAllocator(Allocator):
         # Iterate over self._liveness._liveout (dictionary containing all
         # live out temporaries for each instruction), and for each conflict use
         # self._igraph.add_edge((t1, t2)) to add the corresponding edge.
-        raise NotImplementedError("build_interference_graph (lab5)") # TODO
+        for (block, instr), live in self._liveness._liveout.items():
+            for t1 in live:
+                for t2 in live:
+                    if t1 != t2:
+                        self._igraph.add_edge((t1, t2))
+            for t1 in live:
+                for t2 in instr.defined():
+                    if t1 != t2:
+                        self._igraph.add_edge((t1, t2))
 
     def smart_alloc(self) -> None:
         """

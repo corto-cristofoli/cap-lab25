@@ -23,13 +23,23 @@ def insertPhis(cfg: CFG, DF: Dict[Block, Set[Block]]) -> None:
         queue: List[Block] = list(defs)
         while queue:
             d = queue.pop(0)
+            if d not in DF:
+                continue
             for b in DF[d]:
                 if b not in has_phi:
-                    # TODO add a phi node in block `b` (Lab 5a, Exercise 4)
-                    raise NotImplementedError("insertPhis")
+                    b.add_phi(
+                        PhiNode(
+                            var, {p.get_label(): var for p in b.get_in()})
+                    )
+                    has_phi.add(b)
+                    queue.append(b)
 
 
-def rename_block(cfg: CFG, DT: Dict[Block, Set[Block]], renamer: Renamer, b: Block) -> None:
+def rename_block(
+        cfg: CFG,
+        DT: Dict[Block, Set[Block]],
+        renamer: Renamer,
+        b: Block) -> None:
     """
     Rename variables from block b.
 
@@ -43,7 +53,8 @@ def rename_block(cfg: CFG, DT: Dict[Block, Set[Block]], renamer: Renamer, b: Blo
         for i in succ.get_phis():
             assert (isinstance(i, PhiNode))
             i.rename_from(renamer, b.get_label())
-    # TODO recursive call(s) of rename_block (Lab 5a, Exercise 5)
+    for succ_b in DT[b]:
+        rename_block(cfg, DT, renamer, succ_b)
 
 
 def rename_variables(cfg: CFG, DT: Dict[Block, Set[Block]]) -> None:
@@ -54,7 +65,8 @@ def rename_variables(cfg: CFG, DT: Dict[Block, Set[Block]]) -> None:
     This is an helper function called during SSA entry.
     """
     renamer = Renamer(cfg.fdata._pool)
-    # TODO initial call(s) to rename_block (Lab 5a, Exercise 5)
+    for entry in cfg.get_entries():
+        rename_block(cfg, DT, renamer, entry)
 
 
 def enter_ssa(cfg: CFG, dom_graphs=False, basename="prog") -> None:
@@ -66,5 +78,8 @@ def enter_ssa(cfg: CFG, dom_graphs=False, basename="prog") -> None:
     `dom_graphs` indicates if we have to print the domination graphs.
     `basename` is used for the names of the produced graphs.
     """
-    # TODO implement this function (Lab 5a, Exercise 2)
-    raise NotImplementedError("enter_ssa")
+    doms = computeDom(cfg)
+    DT = computeDT(cfg, doms, dom_graphs, basename)
+    DF = computeDF(cfg, doms, DT, dom_graphs, basename)
+    insertPhis(cfg, DF)
+    rename_variables(cfg, DT)

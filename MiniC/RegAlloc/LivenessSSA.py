@@ -35,16 +35,32 @@ class LivenessSSA:
 
     def livein_at_instruction(self, block: Block, pos: int, var: Temporary) -> None:
         """Backward propagation of liveness information at the beginning of an instruction."""
-        raise NotImplementedError("LivenessSSA") # TODO (Lab 5b, Exercise 1)
+        instr = block.get_all_statements()[pos]
+        if isinstance(instr, PhiNode) and var in instr.used():
+            inv_map = {v: k for k, v in instr.get_srcs().items()}
+            self.liveout_at_block(self._cfg.get_block(inv_map[var]), var)
+        else:
+            if pos == 0:
+                for Bpred in block.get_in():
+                    self.liveout_at_block(Bpred, var)
+            else:
+                self.liveout_at_instruction(block, pos - 1, var)
 
     def liveout_at_instruction(self, block: Block, pos: int, var: Temporary) -> None:
         """Backward propagation of liveness information at the end of an instruction."""
         instr = block.get_all_statements()[pos]
-        raise NotImplementedError("LivenessSSA") # TODO (Lab 5b, Exercise 1)
+        self._liveout[block, instr].add(var)
+        if var not in instr.defined():
+            self.livein_at_instruction(block, pos, var)
 
     def liveout_at_block(self, block: Block, var: Temporary) -> None:
         """Backward propagation of liveness information at the end of a block."""
-        raise NotImplementedError("LivenessSSA") # TODO (Lab 5b, Exercise 1)
+        if var not in self._seen[block]:
+            self._seen[block].add(var)
+            self.liveout_at_instruction(
+                    block,
+                    len(block.get_all_statements()) - 1,
+                    var)
 
     def gather_uses(self) -> Dict[Temporary, Set[Tuple[Block, int]]]:
         """
@@ -67,7 +83,13 @@ class LivenessSSA:
 
     def conflict_on_phis(self) -> None:
         """Ensures that variables defined by φ instructions are in conflict with one-another."""
-        raise NotImplementedError("LivenessSSA") # TODO (Lab 5b, Exercise 1)
+        for block in self._cfg.get_blocks():
+            seen = set()
+            for phis in block.get_phis():
+                temp = phis.defined()[0]
+                seen.add(temp)
+                # assert isinstance(temp, Temporary)
+                self._liveout[block, phis] |= seen
 
     def print_map_in_out(self) -> None:  # pragma: no cover
         """Print live out sets at each instruction, group by block, useful for debugging!"""
