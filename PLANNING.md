@@ -74,4 +74,4 @@ _Academic first semester 2025-2026_
 
 - :book: Course: Monday 17/11/2025, 10h15-12h15. Amphi B (Ludovic Henrio)
 
-  3-Address Code generation [transparents](course/CAP_func_codegen_typing.pdf).
+  Funtions: code generation and typing [transparents](course/CAP_func_codegen_typing.pdf).
