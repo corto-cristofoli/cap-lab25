@@ -84,3 +84,8 @@ _Academic first semester 2025-2026_
 - :book: Course: Monday 24/11/2025, 10h15-12h15. Amphi B (Ludovic Henrio)
 
   Semantics of functions [transparents](course/cap_funsem.pdf).
+
+- :hammer: Lab: _à la carte_ : Optimisations in SSA, Functions or futures. Tuesday 25/11/2025, 10h15-12h15. Room E001 (Emma Nardino & Léo Paviet Salomon).
+  
+  * Lab pdfs: [Optims](RegAlloc/tp5c.pdf), [Functions part 1](TP06/tp6a.pdf), [Functions part
+    2](TP06/tp6b.pdf), [Futures](TPfutures/tpfutures.pdf)
