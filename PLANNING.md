@@ -80,3 +80,7 @@ _Academic first semester 2025-2026_
 - :pencil: TD: Tuesday 18/11/2025, 10h15-12h15. Room E001 (Emma Nardino & Léo Paviet Salomon).
 
   * TD worksheet [TD](TD/td_cap.pdf)
+
+- :book: Course: Monday 24/11/2025, 10h15-12h15. Amphi B (Ludovic Henrio)
+
+  Semantics of functions [transparents](course/cap_funsem.pdf).
