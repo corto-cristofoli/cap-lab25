@@ -49,6 +49,7 @@ def ordered_blocks_list(cfg: CFG) -> List[Block]:
 def linearize(cfg: CFG) -> List[Statement]:
     """
     Linearize the given control flow graph as a list of instructions.
+    The output list should contain at least the starting label
     """
     # TODO
     l: List[Statement] = []  # Linearized CFG

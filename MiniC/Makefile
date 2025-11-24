@@ -112,7 +112,7 @@ clean: clean-tests
 
 .PHONY: install-deps
 install-deps:
-	python3 -m pip install --upgrade antlr4-python3-runtime==4.13.1 pytest pytest-cov pytest-xdist coverage graphviz networkx pygraphviz iniconfig 
+	python3 -m pip install --upgrade antlr4-python3-runtime==4.13.2 pytest pytest-cov pytest-xdist coverage graphviz networkx pygraphviz iniconfig 
 
 .PHONY: test test-interpret test-codegen clean clean-tests tar antlr
 # multiple invocations of pytest in parallel would share temporary file names

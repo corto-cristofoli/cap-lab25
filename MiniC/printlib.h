@@ -6,9 +6,9 @@
  */
 
 typedef char * string;
-typedef int bool;
-static const int true = 1;
-static const int false = 0;
+/* Get definitions for bool type and true/false constants (exist since C99, but
+   aren't always present by default). */
+#include <stdbool.h>
 
 void print_int(int);
 void println_int(int);

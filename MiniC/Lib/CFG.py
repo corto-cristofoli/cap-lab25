@@ -273,8 +273,15 @@ class CFG:
 
     def print_code(self, output, linearize=(lambda cfg: list(cfg.linearize_naive())),
                    comment=None) -> None:
-        """Print the linearization of the CFG."""
+        """
+        Print the linearization of the CFG.
+        linearize should return a list of instruction containing at least the
+        starting label
+        """
         statements = linearize(self)
+        if (self._start not in statements):
+            raise MiniCInternalError(
+                "Invalid linearzation : starting label not in statements list.")
         _print_code(statements, self.fdata, output, init_label=self._start,
                     fin_label=self._end, fin_div0=False, comment=comment)
 

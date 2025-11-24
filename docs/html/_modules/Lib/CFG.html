@@ -445,8 +445,15 @@
 <a class="viewcode-back" href="../../api/Lib.CFG.html#Lib.CFG.CFG.print_code">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">print_code</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">linearize</span><span class="o">=</span><span class="p">(</span><span class="k">lambda</span> <span class="n">cfg</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">linearize_naive</span><span class="p">())),</span>
                    <span class="n">comment</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Print the linearization of the CFG.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Print the linearization of the CFG.</span>
+<span class="sd">        linearize should return a list of instruction containing at least the</span>
+<span class="sd">        starting label</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">statements</span> <span class="o">=</span> <span class="n">linearize</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">statements</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">MiniCInternalError</span><span class="p">(</span>
+                <span class="s2">&quot;Invalid linearzation : starting label not in statements list.&quot;</span><span class="p">)</span>
         <span class="n">_print_code</span><span class="p">(</span><span class="n">statements</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fdata</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">init_label</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_start</span><span class="p">,</span>
                     <span class="n">fin_label</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_end</span><span class="p">,</span> <span class="n">fin_div0</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="n">comment</span><span class="p">)</span></div>
 
