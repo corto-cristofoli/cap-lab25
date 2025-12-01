@@ -89,3 +89,7 @@ _Academic first semester 2025-2026_
   
   * Lab pdfs: [Optims](RegAlloc/tp5c.pdf), [Functions part 1](TP06/tp6a.pdf), [Functions part
     2](TP06/tp6b.pdf), [Futures](TPfutures/tpfutures.pdf)
+
+- :book: Course: Monday 1/12/2025, 10h15-12h15. Amphi B (Ludovic Henrio)
+
+  Parallelism [transparents](course/cap_parallelism.pdf).
