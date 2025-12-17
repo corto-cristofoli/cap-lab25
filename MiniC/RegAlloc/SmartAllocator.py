@@ -1,6 +1,6 @@
 from typing import List, Dict
 from Lib.Errors import MiniCInternalError
-from Lib.Operands import Temporary, Operand, S, Offset, DataLocation, GP_REGS
+from Lib.Operands import Temporary, Operand, S, Offset, DataLocation, GP_REGS, Register
 from Lib.Statement import Instruction
 from Lib.Allocator import Allocator
 from Lib.FunctionData import FunctionData
@@ -28,9 +28,26 @@ class SmartAllocator(Allocator):
         before: List[Instruction] = []
         after: List[Instruction] = []
         new_args: List[Operand] = []
-        # TODO (lab5): Compute before, after, subst. This is similar to what
-        # TODO (lab5): replace from the Naive and AllInMem Allocators do (Lab 4).
-        raise NotImplementedError("Smart Replace (lab5)") # TODO
+        
+        id_reg = 1
+        for i, arg in enumerate(old_instr.args()):
+            if isinstance(arg, Temporary):
+                loc = arg.get_alloced_loc()
+                if not isinstance(loc, Register):
+                    if not (old_instr.ins.startswith("b")):
+                        if i != 0:  # source
+                            before.append(RiscV.Instru3A("ld", S[id_reg], loc))
+                        elif i == 0:  # destination
+                            if not old_instr.is_read_only():
+                                after.append(RiscV.Instru3A("sd", S[id_reg], loc))
+                    else:
+                        before.append(RiscV.Instru3A("ld", S[id_reg], loc))
+                    new_args.append(S[id_reg])
+                    id_reg += 1
+                else:
+                    new_args.append(loc)
+            else:
+                new_args.append(arg)
         # And now return the new list!
         instr = old_instr.with_args(new_args)
         return before + [instr] + after
@@ -97,10 +114,13 @@ class SmartAllocator(Allocator):
             self._igraph.print_dot(self._basename + "_colored.dot", coloringreg)
         # Temporary -> DataLocation (Register or Offset) dictionary,
         # specifying where a given Temporary should be allocated:
-        alloc_dict: Dict[Temporary, DataLocation] = dict()
+        nb_regs = len(GP_REGS)
+        alloc_dict: Dict[Temporary, DataLocation] = {
+            vertex: GP_REGS[color] if color < nb_regs else self._fdata.fresh_offset()
+            for vertex, color in coloringreg.items()
+        }
         # Use the coloring `coloringreg` to fill `alloc_dict`.
         # Our version is less than 5 lines of code.
-        raise NotImplementedError("Allocation based on graph coloring (lab5)") # TODO
         if self._debug:
             print("Allocation:")
             print(alloc_dict)

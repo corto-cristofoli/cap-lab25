@@ -14,7 +14,11 @@ from Lib.Errors import MiniCInternalError
 from RegAlloc.SequentializeMoves import sequentialize_moves
 
 
-def generate_moves_from_phis(phis: List[PhiNode], parent: Block) -> List[BlockInstr]:
+def generate_moves_from_phis(
+        phis: List[PhiNode],
+        parent: Block,
+        is_smart: bool
+        ) -> List[BlockInstr]:
     """
     `generate_moves_from_phis(phis, parent)` builds a list of move instructions
     to be inserted in a new block between `parent` and the block with phi nodes
@@ -22,12 +26,26 @@ def generate_moves_from_phis(phis: List[PhiNode], parent: Block) -> List[BlockIn
 
     This is an helper function called during SSA exit.
     """
-    moves: List[BlockInstr] = []
-    for phi in phis:
-        for sources, var_source in phi.srcs.items():
-            if sources == parent.get_label():
-                moves.append(RiscV.mv(phi.var, var_source))
-    return moves
+    if is_smart:
+        parallel_moves = set()
+        for phi in phis:
+            for sources, var_source in phi.srcs.items():
+                if sources == parent.get_label():
+                    dest = phi.var
+                    src = var_source
+                    if isinstance(dest, Temporary):
+                        dest = dest.get_alloced_loc()
+                    if isinstance(src, Temporary):
+                        src = src.get_alloced_loc()
+                    parallel_moves.add((dest, src))
+        return sequentialize_moves(parallel_moves)
+    else:
+        moves: List[BlockInstr] = []
+        for phi in phis:
+            for sources, var_source in phi.srcs.items():
+                if sources == parent.get_label():
+                    moves.append(RiscV.mv(phi.var, var_source))
+        return moves
 
 
 def exit_ssa(cfg: CFG, is_smart: bool) -> None:
@@ -44,7 +62,7 @@ def exit_ssa(cfg: CFG, is_smart: bool) -> None:
         b.remove_all_phis()  # Remove all phi nodes in the block
         parents: List[Block] = b.get_in().copy()  # Copy as we modify it by adding blocks
         for parent in parents:
-            moves = generate_moves_from_phis(phis, parent)
+            moves = generate_moves_from_phis(phis, parent, is_smart)
             if not moves:
                 continue
             match parent.get_terminator():

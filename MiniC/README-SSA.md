@@ -3,19 +3,17 @@ LAB5a (Control Flow Graph in SSA Form) & LAB5b (Smart Register Allocation), CAP 
 
 # Authors
 
-YOUR NAME HERE
+Corto CRISTOFOLI
 
 # Contents
 
-TODO:
-- Explain any design choices you may have made.
-- Do not forget to remove all debug traces from your code!
-- Did you implement an extension?
+Everything + a swap optimization for 1 and 2 cycles is implemented using `xor`.
 
 # Test design 
 
-TODO: give the main objectives of your tests.
+The tests of CodeGen are separated into different steps, corresponding to the one we have in the tp4. There is also a
+`fail-tests` directory to test the errors. I only use this tests since they cover the majority of cases.
 
 # Known bugs
 
-TODO: bugs you could not fix (if any).
+I haven't seen bugs

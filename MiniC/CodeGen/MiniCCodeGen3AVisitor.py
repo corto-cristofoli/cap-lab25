@@ -158,31 +158,31 @@ class MiniCCodeGen3AVisitor(MiniCVisitor):
         dest_temp = self.fresh_tmp()
         tmpl = self.visit(ctx.expr(0))
         tmpr = self.visit(ctx.expr(1))
-        if relation == MiniCParser.NEQ:  # x!=y  <=>  x^y
-            self.add_statement(
-                    RiscV.xor(dest_temp, tmpl, tmpr))
-            self.add_statement(  # b&&1=1 if b != 0
-                   RiscV.land(dest_temp, dest_temp, ONE))
-        elif relation == MiniCParser.EQ:  # x==y <=> (x^y)^1
-            self.add_statement(
-                    RiscV.xor(dest_temp, tmpl, tmpr))
-            self.add_statement(  # b&&1=1 if b != 0
-                   RiscV.land(dest_temp, dest_temp, ONE))
-            self.add_statement(
-                    RiscV.xor(dest_temp, dest_temp, ONE))
-        else:
-            # for the NEQ and EQ, no need to use label and jump
-            self.add_statement(
-                    RiscV.li(dest_temp, ONE))
-            end_rel_label = self.fresh_label("end_rel")
-            self.add_statement(
-                    RiscV.conditional_jump(end_rel_label, tmpl,
-                                           Condition(ctx.myop.type),
-                                           tmpr)
-                    )
-            self.add_statement(
-                    RiscV.li(dest_temp, ZERO))
-            self.add_statement(end_rel_label)
+        # if relation == MiniCParser.NEQ:  # x!=y  <=>  x^y
+        #     self.add_statement(
+        #             RiscV.xor(dest_temp, tmpl, tmpr))
+        #     self.add_statement(  # b&&1=1 if b != 0
+        #            RiscV.land(dest_temp, dest_temp, ONE))
+        # elif relation == MiniCParser.EQ:  # x==y <=> (x^y)^1
+        #     self.add_statement(
+        #             RiscV.xor(dest_temp, tmpl, tmpr))
+        #     self.add_statement(  # b&&1=1 if b != 0
+        #            RiscV.land(dest_temp, dest_temp, ONE))
+        #     self.add_statement(
+        #             RiscV.xor(dest_temp, dest_temp, ONE))
+        # else:
+        #     # for the NEQ and EQ, no need to use label and jump
+        self.add_statement(
+                RiscV.li(dest_temp, ONE))
+        end_rel_label = self.fresh_label("end_rel")
+        self.add_statement(
+                RiscV.conditional_jump(end_rel_label, tmpl,
+                                       Condition(ctx.myop.type),
+                                       tmpr)
+                )
+        self.add_statement(
+                RiscV.li(dest_temp, ZERO))
+        self.add_statement(end_rel_label)
 
         # # I added slt into lib/RiscV but apparently it is not allowed
         #

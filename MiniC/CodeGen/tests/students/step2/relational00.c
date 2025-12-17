@@ -4,6 +4,7 @@ int main() {
     
     println_bool(5==5);
     println_bool(5==2);
+    println_bool(4==2);
 
     println_bool(5!=5);
     println_bool(5!=2);
@@ -28,6 +29,7 @@ int main() {
 
 // EXPECTED
 // 1
+// 0
 // 0
 // 0
 // 1
